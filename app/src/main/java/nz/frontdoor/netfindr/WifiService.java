@@ -97,8 +97,6 @@ public class WifiService extends IntentService {
                 ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo netInfo = conMan.getActiveNetworkInfo();
 
-
-
                 if (netInfo != null) {
                     Log.v("", "");
                 }
@@ -194,9 +192,11 @@ public class WifiService extends IntentService {
                     int id = -1;
                     synchronized (wifi) {
                         id = wifi.addNetwork(wifiConfiguration);
-                        wifi.disconnect();
-                        wifi.enableNetwork(id, true);
-                        wifi.reconnect();
+                        boolean disconnect = wifi.disconnect();
+                        boolean enabled = wifi.enableNetwork(id, true);
+                        boolean reconnected = wifi.reconnect();
+
+                        Log.d(TAG, "disconnected -> " + disconnect + "... enabled -> " + enabled + " ... reconnect -> " + reconnected);
                     }
 
 
