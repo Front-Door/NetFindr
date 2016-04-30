@@ -344,4 +344,12 @@ public class Database extends SQLiteOpenHelper {
 
         return successful.get(0);
     }
+
+    public void clearNetworks() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM " + RESULTS_TABLE_NAME + ";");
+        db.execSQL("VACUUM;");
+        db.close();
+
+    }
 }

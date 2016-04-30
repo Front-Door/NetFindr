@@ -40,7 +40,6 @@ public class WifiService extends IntentService {
     public static Context context;
 
     private List<ScanResult> networks;
-    private List<String> seenSSID;
 
     private WifiManager wifi;
     private BroadcastReceiver wifiScanReciver;
@@ -57,6 +56,7 @@ public class WifiService extends IntentService {
     }
 
     private enum SECURITY_TYPE {
+        DONT_EVEN,
         WPA2,
         WPA,
         WEP,
@@ -68,7 +68,6 @@ public class WifiService extends IntentService {
         Log.v(TAG, "Service Created");
 
         networks = new ArrayList<>();
-        seenSSID = new ArrayList<>();
         database = new Database(context);
 
         new SUPRHackrThrd().execute();
@@ -95,11 +94,10 @@ public class WifiService extends IntentService {
                             }
                         }
 
-                        if (!e && !seenSSID.contains(r.SSID)) {
+
+                        if (!e && !database.isKnownNetwork(r.SSID)) {
                             networks.add(r);
                             u++;
-                        } else {
-                            seenSSID.add(r.SSID);
                         }
                     }
 
@@ -241,6 +239,12 @@ public class WifiService extends IntentService {
                     Log.v(TAG, "Skipping Network... No Security");
                     continue;
                 }
+
+                if (security_type == SECURITY_TYPE.DONT_EVEN) {
+                    Log.v(TAG, "Skipping Network... Just NO. Just NOOOOOO");
+                    continue;
+                }
+
                 for (Password password : passwords) {
                     WifiConfiguration wifiConfiguration = new WifiConfiguration();
                     wifiConfiguration.SSID = String.format("\"%s\"", sr.SSID);
@@ -295,7 +299,9 @@ public class WifiService extends IntentService {
     private static SECURITY_TYPE getSecurityType(ScanResult s) {
         String c = s.capabilities;
 
-        if (c.contains("WPA2")) {
+        if (c.contains("TKIP")) {
+            return SECURITY_TYPE.DONT_EVEN;
+        } else if (c.contains("WPA2")) {
             return SECURITY_TYPE.WPA2;
         } else if (c.contains("WPA")) {
             return SECURITY_TYPE.WPA;
