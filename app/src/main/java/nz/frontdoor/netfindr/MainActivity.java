@@ -53,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
             id = pass.getId();
         }
 
-        db.addSuccessConnection(new SuccessfulConnection("Wifi", id, 0, 0, "WPA", new Date()));
-
         Log.d("db", "id:" + id);
         for (SuccessfulConnection conn : db.getSuccessfulConnections()) {
             if (conn == null) {
@@ -73,5 +71,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    public void startConnectionList(View v) {
+        Intent newList = new Intent(this, ConnectionListActivity.class);
+        startActivity(newList);
     }
 }

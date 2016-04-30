@@ -88,6 +88,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/secondary_header"
+        android:orientation="vertical"
+        android:layout_margin="20dp"
+        android:id="@+id/linearLayout">
         android:orientation="vertical">
 
         <TextView
@@ -119,6 +122,16 @@
             android:textAlignment="center" />
 
     </LinearLayout>
+
+    <Button
+        android:onClick="startConnectionList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="START LIST"
+        android:id="@+id/button1"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/linearLayout"
+        android:layout_alignStart="@+id/linearLayout" />
 
 
 </RelativeLayout>

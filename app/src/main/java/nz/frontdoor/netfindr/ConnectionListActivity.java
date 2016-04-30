@@ -9,6 +9,8 @@ import android.widget.ListView;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import nz.frontdoor.netfindr.services.Database;
+
 public class ConnectionListActivity extends AppCompatActivity {
 
     @Override
@@ -16,14 +18,10 @@ public class ConnectionListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connectionlist);
         RecyclerView mainList = (RecyclerView) findViewById(R.id.main_list);
-        ArrayList<String> names = new ArrayList<>();
-        names.add("TWO O'CLOCK");
-        names.add("ONE O'CLOCK");
-        names.add("NINE O'CLOCK");
-        names.add("FIVE O'CLOCK");
 
         mainList.setLayoutManager(new LinearLayoutManager(this));
-        mainList.setAdapter(new ConnectionAdapter(names));
+        Database db = new Database(getApplicationContext());
+        mainList.setAdapter(new ConnectionAdapter(db.getSuccessfulConnections()));
         updateList();
     }
 
