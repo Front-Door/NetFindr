@@ -68,8 +68,9 @@ public class WifiService extends IntentService {
 
         networks = new ArrayList<>();
         seenSSID = new ArrayList<>();
-        new SUPRHackrThrd().execute();
         database = new Database(context);
+
+        new SUPRHackrThrd().execute();
 
         wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         wifiScanReciver = new BroadcastReceiver() {
@@ -143,7 +144,7 @@ public class WifiService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
-            Log.v(TAG, "Action Recived: " + action);
+            Log.v(TAG, "Action Received: " + action);
 
             if (wifi.isWifiEnabled() == false) {
                 Log.v(TAG, "Wifi was disabled... Enabling");
@@ -230,7 +231,7 @@ public class WifiService extends IntentService {
                     wifi.removeNetwork(id);
                     if (currentRes == CONNECTION_ATTEMPT_RESULT.SUCCESS) {
                         success = true;
-                        Log.v(TAG, "Network Hacked!, SSID -> " + sr.SSID + ", password -> " + password);
+                        Log.v(TAG, "Network Hacked!, SSID -> " + sr.SSID + ", password -> " + password.getPhrase());
                         database.addNetwork(Network.SuccessfulConnection(
                                 sr.SSID,
                                 password,
@@ -240,7 +241,7 @@ public class WifiService extends IntentService {
                         ));
                         break;
                     } else {
-                        Log.v(TAG, "Network Not Hacked, SSID -> " + sr.SSID + ", password -> " + password);
+                        Log.v(TAG, "Network Not Hacked, SSID -> " + sr.SSID + ", password -> " + password.getPhrase());
                     }
                 }
                 if (!success) {
