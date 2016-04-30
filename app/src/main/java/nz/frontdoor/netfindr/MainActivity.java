@@ -58,9 +58,7 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         Database db = new Database(getApplicationContext());
-        // Insert dummy data
-        db.addPassword(new Password("password", 1));
-        // Log the passwords and success full connections
+
         Password passwd = null;
         for (Password pass : db.getPasswords()) {
             if (pass == null) {
