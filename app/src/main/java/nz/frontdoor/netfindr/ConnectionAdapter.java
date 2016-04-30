@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import nz.frontdoor.netfindr.services.Network;
  */
 public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.ViewHolder> {
 
+    SimpleDateFormat SD = new SimpleDateFormat("KK:mm a dd/MM/yy ");
     private List<Network> datain;
 
     public ConnectionAdapter(List<Network> datain){
@@ -36,11 +38,11 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
         Network C = datain.get(position);
 
-        holder.data0.setText(String.valueOf(C.getTimestamp()));
+        holder.data0.setText(SD.format(C.getTimestamp()));
         holder.data1.setText(String.valueOf(C.getWifiName()));
         holder.data2.setText(String.valueOf(C.getSecurityType()));
-        holder.data3.setText(String.valueOf(C.getLatitude()));
-        holder.data4.setText(String.valueOf(C.getLongitude()));;
+        holder.data3.setText(String.valueOf(C.getLatitude())+"N");
+        holder.data4.setText(String.valueOf(C.getLongitude())+"E");
     }
 
     @Override
