@@ -165,6 +165,18 @@
                 android:text="START LIST" />
         </LinearLayout>
 
+    <Button
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/button"
+        android:layout_alignBottom="@+id/button_layout"
+        android:layout_alignLeft="@+id/button_layout"
+        android:layout_alignStart="@+id/button_layout"
+        android:onClick="startConnectionList"
+        />
+
 
     </RelativeLayout>
 </ScrollView>

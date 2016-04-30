@@ -13,5 +13,6 @@
     <color name="windowBackground">#fff</color>
     <color name="navigationBarColor">#860038</color>
     <color name="statusBarColor">#860038</color>
-    <color name="textColorPrimary">#fff4f4f4</color>
+    <color name="textColorPrimary">#fff4f4f4</color>F0D5E0
+	<color name="listBackround">#F0D5E0</color>
 </resources>
