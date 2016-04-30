@@ -26,6 +26,8 @@ import java.util.Date;
 import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Password;
 import nz.frontdoor.netfindr.services.Network;
+import nz.frontdoor.netfindr.services.SingleConnectionInfo;
+
 import android.view.Menu;
 import android.view.View;
 
@@ -118,5 +120,16 @@ public class MainActivity extends AppCompatActivity {
     public void startConnectionList(View v) {
         Intent newList = new Intent(this, ConnectionListActivity.class);
         startActivity(newList);
+    }
+
+    public void viewMostRecent(View v) {
+        Database db = new Database(getApplicationContext());
+        int id = -1;
+        if(db.getMostRecentSuccessfulNetwork() != null){
+            id = db.getMostRecentSuccessfulNetwork().getId();
+        }
+        Intent mostRecent = new Intent(this, SingleConnectionInfo.class);
+        mostRecent.putExtra("id", id);
+        startActivity(mostRecent);
     }
 }
