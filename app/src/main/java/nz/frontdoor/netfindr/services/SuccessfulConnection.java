@@ -2,6 +2,7 @@ package nz.frontdoor.netfindr.services;
 
 import android.database.Cursor;
 
+import java.io.InvalidObjectException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -93,12 +94,20 @@ public class SuccessfulConnection {
         return timestamp;
     }
 
+    public int getPasswordId() {
+        return passwordId;
+    }
+
     public Password getPassword(Database db) {
         if (password != null) {
             return password;
         }
 
+        if (passwordId == 0) {
+            throw new RuntimeException();
+        }
         password = db.getPasswordById(passwordId);
+
         return password;
     }
 }

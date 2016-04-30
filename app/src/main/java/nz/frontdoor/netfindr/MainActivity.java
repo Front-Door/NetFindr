@@ -40,22 +40,32 @@ public class MainActivity extends AppCompatActivity {
         Database db = new Database(getApplicationContext());
 
         // Insert dummy data
-        // db.addPassword(new Password("password", 1));
-        // db.addSuccessConnection(new SuccessfulConnection("Wifi", 0, 0, "WPA", new Date()));
+        db.addPassword(new Password("password", 1));
 
         // Log the passwords and success full connections
+        int id = 0;
         for (Password pass : db.getPasswords()) {
             if (pass == null) {
                 Log.e("db", "pass null");
             }
             Log.d("db", pass.getPhrase());
+            id = pass.getId();
         }
 
+        db.addSuccessConnection(new SuccessfulConnection("Wifi", id, 0, 0, "WPA", new Date()));
+
+        Log.d("db", "id:" + id);
         for (SuccessfulConnection conn : db.getSuccessfulConnections()) {
             if (conn == null) {
                 Log.e("db", "pass null");
             }
-            Log.d("db", conn.getWifiName());
+            Log.d("db", "wifi:" + conn.getWifiName());
+
+            Password pass = conn.getPassword(db);
+            if (pass != null) {
+                Log.d("db", "phrase:" + pass.getPhrase());
+            }
         }
+
     }
 }

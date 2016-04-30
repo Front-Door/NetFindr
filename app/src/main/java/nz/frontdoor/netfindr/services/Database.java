@@ -17,7 +17,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class Database extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "netfindr";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private static final String RESULTS_TABLE_NAME = "results";
 
@@ -99,9 +99,11 @@ public class Database extends SQLiteOpenHelper {
         values.put(RESULTS_LAT_NAME, result.getLatitude());
         values.put(RESULTS_SECURITY_NAME, result.getSecurityType());
         values.put(RESULTS_TIMESTAMP_NAME,  format.format(result.getTimestamp()));
+        values.put(RESULTS_PASSWORD_NAME, result.getPasswordId());
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert(RESULTS_TABLE_NAME, null, values);
+        db.close();
     }
 
     /**
@@ -115,6 +117,7 @@ public class Database extends SQLiteOpenHelper {
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert(PASSWORDS_TABLE_NAME, null, values);
+        db.close();
     }
 
     public List<Password> getPasswords() {
@@ -137,6 +140,7 @@ public class Database extends SQLiteOpenHelper {
         } while (cursor.moveToNext());
 
         cursor.close();
+        db.close();
 
         return passwords;
     }
@@ -148,6 +152,7 @@ public class Database extends SQLiteOpenHelper {
                 new String [] {
                         RESULTS_ID_NAME,
                         RESULTS_WIFI_NAME,
+                        RESULTS_PASSWORD_NAME,
                         RESULTS_LAT_NAME,
                         RESULTS_LONG_NAME,
                         RESULTS_SECURITY_NAME,
@@ -167,6 +172,7 @@ public class Database extends SQLiteOpenHelper {
         } while (cursor.moveToNext());
 
         cursor.close();
+        db.close();
 
         return connections;
     }
@@ -187,6 +193,7 @@ public class Database extends SQLiteOpenHelper {
         Password password = Password.fromCursor(cursor);
 
         cursor.close();
+        db.close();
 
         return password;
     }
