@@ -11,8 +11,11 @@ import android.util.Log;
 import android.util.StringBuilderPrinter;
 import android.widget.TextView;
 
+import java.util.Date;
+
 import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Password;
+import nz.frontdoor.netfindr.services.SuccessfulConnection;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,11 +39,11 @@ public class MainActivity extends AppCompatActivity {
 
         Database db = new Database(getApplicationContext());
 
-        // db.addPassword("1123");
+        // Insert dummy data
+        // db.addPassword(new Password("password", 1));
+        // db.addSuccessConnection(new SuccessfulConnection("Wifi", 0, 0, "WPA", new Date()));
 
-        TextView view = (TextView)findViewById(R.id.text);
-
-        StringBuilder passwords = new StringBuilder();
+        // Log the passwords and success full connections
         for (Password pass : db.getPasswords()) {
             if (pass == null) {
                 Log.e("db", "pass null");
@@ -48,6 +51,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d("db", pass.getPhrase());
         }
 
-        view.setText(passwords.toString());
+        for (SuccessfulConnection conn : db.getSuccessfulConnections()) {
+            if (conn == null) {
+                Log.e("db", "pass null");
+            }
+            Log.d("db", conn.getWifiName());
+        }
     }
 }

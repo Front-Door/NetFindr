@@ -1,5 +1,7 @@
 package nz.frontdoor.netfindr.services;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +17,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class Database extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "netfindr";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String RESULTS_TABLE_NAME = "results";
 
@@ -36,6 +38,9 @@ public class Database extends SQLiteOpenHelper {
     private static final String RESULTS_TIMESTAMP_NAME = "timestamp";
     private static final String RESULTS_TIMESTAMP_TYPE = "INTEGER";
 
+    private static final String RESULTS_PASSWORD_NAME = "password_id";
+    private static final String RESULTS_PASSWORD_TYPE = "INTEGER";
+
     private static final String RESULTS_TABLE_CREATE =
             "CREATE TABLE " + RESULTS_TABLE_NAME + " (" +
                     RESULTS_ID_NAME + " INTEGER PRIMARY KEY," +
@@ -43,6 +48,7 @@ public class Database extends SQLiteOpenHelper {
                     RESULTS_LAT_NAME + " " + RESULTS_LAT_TYPE + ", " +
                     RESULTS_LONG_NAME + " " + RESULTS_LONG_TYPE + ", " +
                     RESULTS_SECURITY_NAME + " " + RESULTS_SECURITY_TYPE + ", " +
+                    RESULTS_PASSWORD_NAME + " " + RESULTS_PASSWORD_TYPE + ", " +
                     RESULTS_TIMESTAMP_NAME + " " + RESULTS_TIMESTAMP_TYPE + " " +
                     ");";
 
@@ -63,9 +69,6 @@ public class Database extends SQLiteOpenHelper {
                     PASSWORD_PHRASE_NAME + " " + PASSWORD_PHRASE_TYPE + " " +
                     ");";
 
-    private static final String PASSWORD_QUERY_ALL =
-            "SELECT * FROM " + PASSWORDS_TABLE_NAME + ";";
-
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -83,10 +86,32 @@ public class Database extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void addPassword(String password) {
+    /**
+     * Add a successful connection to the database
+     * @param result
+     */
+    public void addSuccessConnection(SuccessfulConnection result) {
+        DateFormat format = SimpleDateFormat.getDateTimeInstance();
+
         ContentValues values = new ContentValues();
-        values.put(PASSWORD_PHRASE_NAME, password);
-        values.put(PASSWORD_RANK_NAME, 1);
+        values.put(RESULTS_WIFI_NAME, result.getWifiName());
+        values.put(RESULTS_LONG_NAME, result.getLongitude());
+        values.put(RESULTS_LAT_NAME, result.getLatitude());
+        values.put(RESULTS_SECURITY_NAME, result.getSecurityType());
+        values.put(RESULTS_TIMESTAMP_NAME,  format.format(result.getTimestamp()));
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.insert(RESULTS_TABLE_NAME, null, values);
+    }
+
+    /**
+     * Add known password into the database
+     * @param password
+     */
+    public void addPassword(Password password) {
+        ContentValues values = new ContentValues();
+        values.put(PASSWORD_PHRASE_NAME, password.getPhrase());
+        values.put(PASSWORD_RANK_NAME, password.getRank());
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert(PASSWORDS_TABLE_NAME, null, values);
@@ -94,20 +119,75 @@ public class Database extends SQLiteOpenHelper {
 
     public List<Password> getPasswords() {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cusor = db.query(PASSWORDS_TABLE_NAME,
+        Cursor cursor = db.query(PASSWORDS_TABLE_NAME,
                 new String [] {PASSWORD_ID_NAME, PASSWORD_PHRASE_NAME, PASSWORD_RANK_NAME},
                 null, null, null, null, null, null
         );
 
-        cusor.moveToFirst();
+        cursor.moveToFirst();
         List<Password> passwords = new ArrayList<>();
-        do {
-            passwords.add(Password.fromCursor(cusor));
-        } while (cusor.moveToNext());
 
-        cusor.close();
+        // Check if there is no elements
+        if (cursor.isAfterLast()) {
+            return passwords;
+        }
+
+        do {
+            passwords.add(Password.fromCursor(cursor));
+        } while (cursor.moveToNext());
+
+        cursor.close();
 
         return passwords;
     }
 
+    public List<SuccessfulConnection> getSuccessfulConnections() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.query(RESULTS_TABLE_NAME,
+                new String [] {
+                        RESULTS_ID_NAME,
+                        RESULTS_WIFI_NAME,
+                        RESULTS_LAT_NAME,
+                        RESULTS_LONG_NAME,
+                        RESULTS_SECURITY_NAME,
+                        RESULTS_TIMESTAMP_NAME
+                },
+                null, null, null, null, null, null
+        );
+
+        cursor.moveToFirst();
+
+
+        List<SuccessfulConnection> connections = new ArrayList<>();
+
+        // Check if there is no elements
+        do {
+            connections.add(SuccessfulConnection.fromCursor(cursor));
+        } while (cursor.moveToNext());
+
+        cursor.close();
+
+        return connections;
+    }
+
+    public Password getPasswordById(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.query(PASSWORDS_TABLE_NAME,
+                new String [] {
+                        PASSWORD_ID_NAME,
+                        PASSWORD_PHRASE_NAME,
+                        PASSWORD_RANK_NAME
+                },
+                PASSWORD_ID_NAME + "=?", new String[] { String.valueOf(id)}, null, null, null, null
+        );
+        cursor.moveToNext();
+
+        Password password = Password.fromCursor(cursor);
+
+        cursor.close();
+
+        return password;
+    }
 }

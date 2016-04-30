@@ -13,7 +13,13 @@ public class Password {
 
     private final int rank;
 
-    public Password(int id, String phrase, int rank) {
+    public Password(String phrase, int rank) {
+        this.id = 0;
+        this.phrase = phrase;
+        this.rank = rank;
+    }
+
+    private Password(int id, String phrase, int rank) {
         this.id = id;
         this.phrase = phrase;
         this.rank = rank;
