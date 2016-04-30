@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
+import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -111,30 +112,63 @@ public class WifiService extends IntentService {
         wifiConnectionReciver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                try {
-                    Thread.sleep(3500);
-                } catch (InterruptedException e) {
+                SupplicantState supl_state=((SupplicantState)intent.getParcelableExtra(WifiManager.EXTRA_NEW_STATE));
+                switch(supl_state){
+                    case ASSOCIATED:
+                        Log.v("SupplicantState", "ASSOCIATED");
+                        break;
+                    case ASSOCIATING:
+                        Log.v("SupplicantState", "ASSOCIATING");
+                        break;
+                    case AUTHENTICATING:
+                        Log.v("SupplicantState", "Authenticating...");
+                        break;
+                    case COMPLETED:
+                        Log.v("SupplicantState", "Connected");
+                        currentRes = CONNECTION_ATTEMPT_RESULT.SUCCESS;
+                        scanComplete.signal();
+                        break;
+                    case DISCONNECTED:
+                        Log.v("SupplicantState", "Disconnected");
+                        currentRes = CONNECTION_ATTEMPT_RESULT.FAILURE;
+                        scanComplete.signal();
+                        break;
+                    case DORMANT:
+                        Log.v("SupplicantState", "DORMANT");
+                        break;
+                    case FOUR_WAY_HANDSHAKE:
+                        Log.i("SupplicantState", "FOUR_WAY_HANDSHAKE");
+                        break;
+                    case GROUP_HANDSHAKE:
+                        Log.i("SupplicantState", "GROUP_HANDSHAKE");
+                        break;
+                    case INACTIVE:
+                        Log.i("SupplicantState", "INACTIVE");
+                        break;
+                    case INTERFACE_DISABLED:
+                        Log.i("SupplicantState", "INTERFACE_DISABLED");
+                        break;
+                    case INVALID:
+                        Log.i("SupplicantState", "INVALID");
+                        break;
+                    case SCANNING:
+                        //Log.i("SupplicantState", "SCANNING");
+                        break;
+                    case UNINITIALIZED:
+                        Log.i("SupplicantState", "UNINITIALIZED");
+                        break;
+                    default:
+                        Log.i("SupplicantState", "Unknown");
+                        break;
 
                 }
 
-                ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo netInfo = conMan.getActiveNetworkInfo();
-
-                if (netInfo != null) {
-                    Log.v("", "");
-                }
-
-                if (netInfo != null && netInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-                    // HAKED
-                    currentRes = CONNECTION_ATTEMPT_RESULT.SUCCESS;
-
-                } else {
-                    // NOT HAKED
+                int supl_error=intent.getIntExtra(WifiManager.EXTRA_SUPPLICANT_ERROR, -1);
+                if(supl_error==WifiManager.ERROR_AUTHENTICATING){
+                    Log.i("ERROR_AUTHENTICATING", "ERROR_AUTHENTICATING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     currentRes = CONNECTION_ATTEMPT_RESULT.FAILURE;
-
+                    scanComplete.signal();
                 }
-
-                scanComplete.signal();
             }
         };
         context.registerReceiver(wifiConnectionReciver, new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION));
