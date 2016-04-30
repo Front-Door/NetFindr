@@ -153,24 +153,12 @@
             android:layout_below="@id/last_connect">
 
             <Button
-                android:id="@+id/button1"
-                android:layout_width="wrap_content"
+                android:text="All Data"
+                android:textColor="@color/darktext"
+                android:id="@+id/all_data_button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="startConnectionList"
-                android:text="START LIST" />
+                android:onClick="startConnectionList"/>
         </LinearLayout>
-
-    <Button
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="All Data"
-        android:id="@+id/button"
-        android:layout_alignBottom="@+id/button_layout"
-        android:layout_alignLeft="@+id/button_layout"
-        android:layout_alignStart="@+id/button_layout"
-        android:onClick="startConnectionList"
-        />
-
 
     </RelativeLayout>

@@ -8,4 +8,5 @@
     <color name="statusBarColor">#860038</color>
     <color name="textColorPrimary">#fff4f4f4</color>F0D5E0
 	<color name="listBackround">#F0D5E0</color>
+    <color name="darktext">#333</color>
 </resources>
