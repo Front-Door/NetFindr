@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         wifiServiceIntent = new Intent(this, WifiService.class);
         wifiServiceIntent.setData(Uri.parse("START"));
 
+        /*
         Button hack = (Button) findViewById(R.id.hack);
         hack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startService(wifiServiceIntent);
             }
         });
+        */
 
         Database db = new Database(getApplicationContext());
         // Insert dummy data
