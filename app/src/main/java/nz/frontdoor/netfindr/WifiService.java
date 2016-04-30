@@ -235,7 +235,7 @@ public class WifiService extends IntentService {
                                 sr.SSID,
                                 password,
                                 0, 0,
-                                "WOW",
+                                security_type.toString(),
                                 new Date()
                         ));
                         break;
@@ -247,7 +247,7 @@ public class WifiService extends IntentService {
                     database.addNetwork(Network.UnsuccessfulConnection(
                             sr.SSID,
                             0, 0,
-                            "GUD",
+                            security_type.toString(),
                             new Date()
                     ));
                 }
