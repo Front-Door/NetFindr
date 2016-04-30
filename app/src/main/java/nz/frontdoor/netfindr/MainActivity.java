@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         wifiServiceIntent = new Intent(this, WifiService.class);
         wifiServiceIntent.setData(Uri.parse("START"));
-        
+
 //        Button hack = (Button) findViewById(R.id.hack);
 //        hack.setOnClickListener(new View.OnClickListener() {
 //            @Override
