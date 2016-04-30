@@ -10,9 +10,12 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import nz.frontdoor.netfindr.R;
 
 /**
  * Created by drb on 30/04/16.
@@ -72,14 +75,22 @@ public class Database extends SQLiteOpenHelper {
                     PASSWORD_PHRASE_NAME + " " + PASSWORD_PHRASE_TYPE + " " +
                     ");";
 
+    private final Resources resources;
+
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        resources = context.getResources();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(RESULTS_TABLE_CREATE);
         db.execSQL(PASSWORDS_TABLE_CREATE);
+
+        String[] defaults = resources.getStringArray(R.array.default_passwords);
+        for (int i = 0; i < defaults.length; i++) {
+            this.addPassword(new Password(defaults[i], i), db);
+        }
     }
 
     @Override
@@ -121,6 +132,14 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.insert(PASSWORDS_TABLE_NAME, null, values);
         db.close();
+    }
+
+    private void addPassword(Password password, SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        values.put(PASSWORD_PHRASE_NAME, password.getPhrase());
+        values.put(PASSWORD_RANK_NAME, password.getRank());
+
+        db.insert(PASSWORDS_TABLE_NAME, null, values);
     }
 
     public List<Password> getPasswords() {
@@ -266,6 +285,34 @@ public class Database extends SQLiteOpenHelper {
         return password;
     }
 
+    public Network getNetworkdById(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.query(RESULTS_TABLE_NAME,
+                new String [] {
+                        RESULTS_ID_NAME,
+                        RESULTS_WIFI_NAME,
+                        RESULTS_PASSWORD_NAME,
+                        RESULTS_LAT_NAME,
+                        RESULTS_LONG_NAME,
+                        RESULTS_SECURITY_NAME,
+                        RESULTS_TIMESTAMP_NAME
+                },
+                RESULTS_ID_NAME + "=?", new String[] {String.valueOf(id)}, null, null, null, null
+        );
+        cursor.moveToNext();
+
+        if (cursor.getCount() == 0) {
+            return null;
+        }
+        Network network = Network.fromCursor(cursor);
+
+        cursor.close();
+        db.close();
+
+        return network;
+    }
+
     public boolean isKnownNetwork(String wifiName) {
         SQLiteDatabase db = getReadableDatabase();
 
@@ -296,5 +343,13 @@ public class Database extends SQLiteOpenHelper {
         });
 
         return successful.get(0);
+    }
+
+    public void clearNetworks() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM " + RESULTS_TABLE_NAME + ";");
+        db.execSQL("VACUUM;");
+        db.close();
+
     }
 }

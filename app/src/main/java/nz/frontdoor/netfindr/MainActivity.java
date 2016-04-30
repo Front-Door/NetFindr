@@ -2,32 +2,20 @@ package nz.frontdoor.netfindr;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
-import android.util.StringBuilderPrinter;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Password;
@@ -37,8 +25,6 @@ import nz.frontdoor.netfindr.services.SingleConnectionInfo;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,14 +40,11 @@ public class MainActivity extends AppCompatActivity {
         WifiService.context = getApplicationContext();
         wifiServiceIntent = new Intent(this, WifiService.class);
         wifiServiceIntent.setData(Uri.parse("START"));
-
-        wifiServiceIntent = new Intent(this, WifiService.class);
-        wifiServiceIntent.setData(Uri.parse("START"));
+        //MainActivity.this.startService(wifiServiceIntent);
 
         Database db = new Database(getApplicationContext());
-        // Insert dummy data
-        db.addPassword(new Password("password", 1));
-        // Log the passwords and success full connections
+        db.clearNetworks();
+
         Password passwd = null;
         for (Password pass : db.getPasswords()) {
             if (pass == null) {
@@ -70,13 +53,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("db", pass.getPhrase());
             passwd = pass;
         }
-
-
-        Log.d("db", "know wifi? " + db.isKnownNetwork("Poorly secure Wifi"));
-        db.addNetwork(Network.SuccessfulConnection("Poorly secure Wifi", passwd, 234.0, 34.034534, "WPA", new Date()));
-        db.addNetwork(Network.UnsuccessfulConnection("Secure WiFi", 40.2, 150.2, "WPA", new Date()));
-        Log.d("db", "know wifi? " + db.isKnownNetwork("Poorly secure Wifi"));
-
 
         for (Network conn : db.getSuccessfulNetworks()) {
             Log.d("db", "wifi:" + conn.getWifiName());
@@ -104,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             TextView ssid = (TextView) findViewById(R.id.ssid);
             ssid.setText("SSID: " + recent.getWifiName());
 
-            TextView timestamp = (TextView) findViewById(R.id.timestamp);
+            TextView timestamp = (TextView) findViewById(R.id.timestamp1);
             DateFormat format = SimpleDateFormat.getDateInstance();
             timestamp.setText("Time Stamp: " + format.format(recent.getTimestamp()));
         }
