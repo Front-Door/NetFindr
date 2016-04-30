@@ -3,6 +3,9 @@ package nz.frontdoor.netfindr.services;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -131,7 +134,7 @@ public class Database extends SQLiteOpenHelper {
         List<Password> passwords = new ArrayList<>();
 
         // Check if there is no elements
-        if (cursor.isAfterLast()) {
+        if (cursor.getCount() == 0) {
             return passwords;
         }
 
@@ -166,6 +169,10 @@ public class Database extends SQLiteOpenHelper {
 
         List<Network> connections = new ArrayList<>();
 
+        if (cursor.getCount() == 0) {
+            return connections;
+        }
+
         // Check if there is no elements
         do {
             connections.add(Network.fromCursor(cursor));
@@ -199,6 +206,10 @@ public class Database extends SQLiteOpenHelper {
         List<Network> connections = new ArrayList<>();
 
         // Check if there is no elements
+        if (cursor.getCount() == 0) {
+            return connections;
+        }
+
         do {
             connections.add(Network.fromCursor(cursor));
         } while (cursor.moveToNext());
@@ -244,6 +255,9 @@ public class Database extends SQLiteOpenHelper {
         );
         cursor.moveToNext();
 
+        if (cursor.getCount() == 0) {
+            return null;
+        }
         Password password = Password.fromCursor(cursor);
 
         cursor.close();
@@ -266,5 +280,21 @@ public class Database extends SQLiteOpenHelper {
         db.close();
 
         return count > 0;
+    }
+
+    public Network getMostRecentSuccessfulNetwork() {
+        List<Network> successful = getSuccessfulNetworks();
+        if (successful.isEmpty()) {
+            return null;
+        }
+
+        Collections.sort(successful, new Comparator<Network>() {
+            @Override
+            public int compare(Network lhs, Network rhs) {
+                return lhs.getTimestamp().compareTo(rhs.getTimestamp());
+            }
+        });
+
+        return successful.get(0);
     }
 }
