@@ -84,7 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="mypassword123"
+                android:text="Unknown"
                 android:textAlignment="center"
                 android:textSize="@dimen/password_info"
                 android:textStyle="bold" />
@@ -129,7 +129,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="SSID: MyWiFi"
+                android:text="SSID: Unknown"
                 android:textAlignment="center"
                 android:textSize="@dimen/main_page_text"
                 android:textStyle="bold" />
@@ -139,7 +139,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="Time Stamp: 3:59pm 30/04/2016"
+                android:text="Time Stamp: Unknown"
                 android:textAlignment="center"
                 android:textSize="@dimen/main_page_text"
                 android:textStyle="bold" />
