@@ -14,6 +14,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -94,6 +98,12 @@ public class WifiService extends IntentService {
         wifiConnectionReciver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                try {
+                    Thread.sleep(3500);
+                } catch (InterruptedException e) {
+
+                }
+
                 ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo netInfo = conMan.getActiveNetworkInfo();
 
@@ -195,8 +205,6 @@ public class WifiService extends IntentService {
                         boolean disconnect = wifi.disconnect();
                         boolean enabled = wifi.enableNetwork(id, true);
                         boolean reconnected = wifi.reconnect();
-
-                        Log.d(TAG, "disconnected -> " + disconnect + "... enabled -> " + enabled + " ... reconnect -> " + reconnected);
                     }
 
 
