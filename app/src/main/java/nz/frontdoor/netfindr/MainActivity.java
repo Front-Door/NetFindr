@@ -47,13 +47,13 @@ public class MainActivity extends AppCompatActivity {
         wifiServiceIntent = new Intent(this, WifiService.class);
         wifiServiceIntent.setData(Uri.parse("START"));
 
-        Button hack = (Button) findViewById(R.id.hack);
-        hack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity.this.startService(wifiServiceIntent);
-            }
-        });
+//        Button hack = (Button) findViewById(R.id.hack);
+//        hack.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                MainActivity.this.startService(wifiServiceIntent);
+//            }
+//        });
 
         Database db = new Database(getApplicationContext());
         // Insert dummy data
@@ -86,6 +86,21 @@ public class MainActivity extends AppCompatActivity {
             Log.d("db", "unsuccessful wifi:" + conn.getWifiName());
         }
 
+        TextView hackCount = (TextView) findViewById(R.id.total_hacks);
+        //String s = "" + db.getSuccessfulNetworks().size();
+        hackCount.setText("" + db.getSuccessfulNetworks().size());
+
+        TextView netCount = (TextView) findViewById(R.id.total_networks);
+        netCount.setText("" + db.getNetworkCount());
+
+        TextView password = (TextView) findViewById(R.id.password);
+        password.setText(db.getPasswordById(1).getPhrase());
+
+        TextView ssid = (TextView) findViewById(R.id.ssid);
+        ssid.setText("SSID: " + "Elf's Secret Network");
+
+        TextView timestamp = (TextView) findViewById(R.id.timestamp);
+        timestamp.setText("Time Stamp: " + "Sat Apr 30 2016, 18:00");
     }
 
     @Override
