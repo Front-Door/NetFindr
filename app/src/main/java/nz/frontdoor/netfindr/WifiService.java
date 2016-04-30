@@ -49,6 +49,12 @@ public class WifiService extends IntentService {
         FAILURE,
     }
 
+    private enum SECURITY_TYPE {
+        WPA2,
+        WPA,
+        WEP,
+        NONE
+    }
 
     public WifiService() {
         super("WifiService");
@@ -185,19 +191,19 @@ public class WifiService extends IntentService {
 
                 Log.v(TAG, "Scanning Network -> " + sr.SSID);
 
+                SECURITY_TYPE security_type = getSecurityType(sr);
+                Log.d(TAG, "Network Security -> " + security_type.toString());
+
+                if (security_type == SECURITY_TYPE.NONE) {
+                    Log.v(TAG, "Skipping Network... No Security");
+                    continue;
+                }
+
                 for (String password : passwords) {
                     WifiConfiguration wifiConfiguration = new WifiConfiguration();
                     wifiConfiguration.SSID = String.format("\"%s\"", sr.SSID);
                     wifiConfiguration.preSharedKey = String.format("\"%s\"", password);
                     wifiConfiguration.status = WifiConfiguration.Status.ENABLED;
-
-                    wifiConfiguration.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
-                    wifiConfiguration.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
-                    wifiConfiguration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-                    wifiConfiguration.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-                    wifiConfiguration.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-                    wifiConfiguration.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
-
 
                     int id = -1;
                     synchronized (wifi) {
@@ -226,5 +232,19 @@ public class WifiService extends IntentService {
 
             //return null;
         }
+    }
+
+    private static SECURITY_TYPE getSecurityType(ScanResult s) {
+        String c = s.capabilities;
+
+        if (c.contains("WPA2")) {
+            return SECURITY_TYPE.WPA2;
+        } else if (c.contains("WPA")) {
+            return SECURITY_TYPE.WPA;
+        } else if (c.contains("WEP")) {
+            return SECURITY_TYPE.WEP;
+        }
+
+        return SECURITY_TYPE.NONE;
     }
 }
