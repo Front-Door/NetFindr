@@ -17,12 +17,12 @@ public class SingleConnectionInfo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_connection);
-        if(savedInstanceState.get("id") != -1){
-
-        }
-        else {
-
-        }
+//        if(savedInstanceState.get("id") != -1){
+//
+//        }
+//        else {
+//
+//        }
 
     }
 }

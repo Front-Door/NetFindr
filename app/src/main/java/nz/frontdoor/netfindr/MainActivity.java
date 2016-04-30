@@ -4,18 +4,24 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.util.StringBuilderPrinter;
+import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 
@@ -30,6 +36,7 @@ import nz.frontdoor.netfindr.services.SingleConnectionInfo;
 
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -50,14 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         wifiServiceIntent = new Intent(this, WifiService.class);
         wifiServiceIntent.setData(Uri.parse("START"));
-
-//        Button hack = (Button) findViewById(R.id.hack);
-//        hack.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                MainActivity.this.startService(wifiServiceIntent);
-//            }
-//        });
 
         Database db = new Database(getApplicationContext());
         // Insert dummy data
@@ -109,12 +108,38 @@ public class MainActivity extends AppCompatActivity {
             DateFormat format = SimpleDateFormat.getDateInstance();
             timestamp.setText("Time Stamp: " + format.format(recent.getTimestamp()));
         }
+
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        MenuItem item = menu.findItem(R.id.on_off_switch);
+        item.setActionView(R.layout.switch_view);
+        SwitchCompat toggle_scanner = (SwitchCompat) item.getActionView().findViewById(R.id.switchForActionBar);
+        toggle_scanner.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    //TODO start hacking
+                    Toast.makeText(getBaseContext(), "Start Scanning", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    // TODO stop hacking
+                    Toast.makeText(getBaseContext(), "Stop Scanning", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getTitle().equals("Settings")){
+
+        }
+        return true;
     }
 
     public void startConnectionList(View v) {
@@ -131,9 +156,5 @@ public class MainActivity extends AppCompatActivity {
         Intent mostRecent = new Intent(this, SingleConnectionInfo.class);
         mostRecent.putExtra("id", id);
         startActivity(mostRecent);
-    }
-
-    public void onOffDialog(View v){
-
     }
 }
