@@ -16,6 +16,7 @@ import java.util.Date;
 import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Password;
 import nz.frontdoor.netfindr.services.SuccessfulConnection;
+import android.view.Menu;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -66,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("db", "phrase:" + pass.getPhrase());
             }
         }
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }
