@@ -3,13 +3,19 @@ package nz.frontdoor.netfindr.services;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import nz.frontdoor.netfindr.R;
 
 /**
  * Created by drb on 30/04/16.
@@ -69,14 +75,22 @@ public class Database extends SQLiteOpenHelper {
                     PASSWORD_PHRASE_NAME + " " + PASSWORD_PHRASE_TYPE + " " +
                     ");";
 
+    private final Resources resources;
+
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        resources = context.getResources();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(RESULTS_TABLE_CREATE);
         db.execSQL(PASSWORDS_TABLE_CREATE);
+
+        String[] defaults = resources.getStringArray(R.array.default_passwords);
+        for (int i = 0; i < defaults.length; i++) {
+            this.addPassword(new Password(defaults[i], i), db);
+        }
     }
 
     @Override
@@ -120,6 +134,14 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
+    private void addPassword(Password password, SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        values.put(PASSWORD_PHRASE_NAME, password.getPhrase());
+        values.put(PASSWORD_RANK_NAME, password.getRank());
+
+        db.insert(PASSWORDS_TABLE_NAME, null, values);
+    }
+
     public List<Password> getPasswords() {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(PASSWORDS_TABLE_NAME,
@@ -131,7 +153,7 @@ public class Database extends SQLiteOpenHelper {
         List<Password> passwords = new ArrayList<>();
 
         // Check if there is no elements
-        if (cursor.isAfterLast()) {
+        if (cursor.getCount() == 0) {
             return passwords;
         }
 
@@ -166,6 +188,10 @@ public class Database extends SQLiteOpenHelper {
 
         List<Network> connections = new ArrayList<>();
 
+        if (cursor.getCount() == 0) {
+            return connections;
+        }
+
         // Check if there is no elements
         do {
             connections.add(Network.fromCursor(cursor));
@@ -199,6 +225,10 @@ public class Database extends SQLiteOpenHelper {
         List<Network> connections = new ArrayList<>();
 
         // Check if there is no elements
+        if (cursor.getCount() == 0) {
+            return connections;
+        }
+
         do {
             connections.add(Network.fromCursor(cursor));
         } while (cursor.moveToNext());
@@ -244,12 +274,43 @@ public class Database extends SQLiteOpenHelper {
         );
         cursor.moveToNext();
 
+        if (cursor.getCount() == 0) {
+            return null;
+        }
         Password password = Password.fromCursor(cursor);
 
         cursor.close();
         db.close();
 
         return password;
+    }
+
+    public Network getNetworkdById(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.query(RESULTS_TABLE_NAME,
+                new String [] {
+                        RESULTS_ID_NAME,
+                        RESULTS_WIFI_NAME,
+                        RESULTS_PASSWORD_NAME,
+                        RESULTS_LAT_NAME,
+                        RESULTS_LONG_NAME,
+                        RESULTS_SECURITY_NAME,
+                        RESULTS_TIMESTAMP_NAME
+                },
+                RESULTS_ID_NAME + "=?", new String[] {String.valueOf(id)}, null, null, null, null
+        );
+        cursor.moveToNext();
+
+        if (cursor.getCount() == 0) {
+            return null;
+        }
+        Network network = Network.fromCursor(cursor);
+
+        cursor.close();
+        db.close();
+
+        return network;
     }
 
     public boolean isKnownNetwork(String wifiName) {
@@ -266,5 +327,21 @@ public class Database extends SQLiteOpenHelper {
         db.close();
 
         return count > 0;
+    }
+
+    public Network getMostRecentSuccessfulNetwork() {
+        List<Network> successful = getSuccessfulNetworks();
+        if (successful.isEmpty()) {
+            return null;
+        }
+
+        Collections.sort(successful, new Comparator<Network>() {
+            @Override
+            public int compare(Network lhs, Network rhs) {
+                return lhs.getTimestamp().compareTo(rhs.getTimestamp());
+            }
+        });
+
+        return successful.get(0);
     }
 }

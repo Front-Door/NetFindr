@@ -19,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import nz.frontdoor.netfindr.services.Database;
@@ -56,9 +58,7 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         Database db = new Database(getApplicationContext());
-        // Insert dummy data
-        db.addPassword(new Password("password", 1));
-        // Log the passwords and success full connections
+
         Password passwd = null;
         for (Password pass : db.getPasswords()) {
             if (pass == null) {
@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("db", "know wifi? " + db.isKnownNetwork("Poorly secure Wifi"));
 
 
-        Log.d("db", "id:" + passwd.getId() + ":" + passwd.getPhrase());
         for (Network conn : db.getSuccessfulNetworks()) {
             Log.d("db", "wifi:" + conn.getWifiName());
             Log.d("db", "loc:" + conn.getLongitude() + ":" + conn.getLatitude());
@@ -87,20 +86,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         TextView hackCount = (TextView) findViewById(R.id.total_hacks);
-        //String s = "" + db.getSuccessfulNetworks().size();
         hackCount.setText("" + db.getSuccessfulNetworks().size());
 
         TextView netCount = (TextView) findViewById(R.id.total_networks);
         netCount.setText("" + db.getNetworkCount());
 
-        TextView password = (TextView) findViewById(R.id.password);
-        password.setText(db.getPasswordById(1).getPhrase());
 
-        TextView ssid = (TextView) findViewById(R.id.ssid);
-        ssid.setText("SSID: " + "Elf's Secret Network");
 
-        TextView timestamp = (TextView) findViewById(R.id.timestamp);
-        timestamp.setText("Time Stamp: " + "Sat Apr 30 2016, 18:00");
+        Network recent = db.getMostRecentSuccessfulNetwork();
+        if (recent != null) {
+            TextView password = (TextView) findViewById(R.id.password);
+            password.setText(recent.getPassword(db).getPhrase());
+
+            TextView ssid = (TextView) findViewById(R.id.ssid);
+            ssid.setText("SSID: " + recent.getWifiName());
+
+            TextView timestamp = (TextView) findViewById(R.id.timestamp);
+            DateFormat format = SimpleDateFormat.getDateInstance();
+            timestamp.setText("Time Stamp: " + format.format(recent.getTimestamp()));
+        }
     }
 
     @Override
