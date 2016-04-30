@@ -30,19 +30,22 @@
             android:orientation="horizontal">
 
             <TextView
-                android:gravity="center"
+                android:textStyle="bold"
                 android:text="SSID"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="0.5"/>
 
 
             <TextView
-                android:gravity="center"
-                android:text="Enc Type"
+                android:id="@+id/time_data1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                tools:text="DATA1" />
+
+
+
 
         </LinearLayout>
 
@@ -54,12 +57,11 @@
             android:orientation="horizontal">
 
             <TextView
-
-                android:id="@+id/time_data1"
+                android:textStyle="bold"
+                android:text="Enc Type"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="DATA1" />
+                android:layout_weight="0.5"/>
 
             <TextView
                 android:id="@+id/time_data2"
@@ -76,18 +78,19 @@
             android:orientation="horizontal">
 
             <TextView
+                android:text="Location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_weight="0.5"/>
+
+
+            <TextView
                 android:id="@+id/time_data3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 tools:text="DATA3" />
-
-            <TextView
-                android:id="@+id/time_data4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="DATA4" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

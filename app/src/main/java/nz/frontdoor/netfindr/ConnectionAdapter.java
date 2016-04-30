@@ -41,8 +41,7 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.Vi
         holder.data0.setText(SD.format(C.getTimestamp()));
         holder.data1.setText(String.valueOf(C.getWifiName()));
         holder.data2.setText(String.valueOf(C.getSecurityType()));
-        holder.data3.setText(String.valueOf(C.getLatitude())+"N");
-        holder.data4.setText(String.valueOf(C.getLongitude())+"E");
+        holder.data3.setText(String.valueOf(C.getLatitude())+"N "+String.valueOf(C.getLongitude())+"E");
     }
 
     @Override
@@ -60,7 +59,6 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.Vi
             data1 = (TextView) itemView.findViewById(R.id.time_data1);
             data2 = (TextView) itemView.findViewById(R.id.time_data2);
             data3 = (TextView) itemView.findViewById(R.id.time_data3);
-            data4 = (TextView) itemView.findViewById(R.id.time_data4);
         }
     }
 }
