@@ -9,16 +9,16 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import nz.frontdoor.netfindr.services.SuccessfulConnection;
+import nz.frontdoor.netfindr.services.Network;
 
 /**
  * Created by Jack on 30/04/2016.
  */
 public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.ViewHolder> {
 
-    private List<SuccessfulConnection> datain;
+    private List<Network> datain;
 
-    public ConnectionAdapter(List<SuccessfulConnection> datain){
+    public ConnectionAdapter(List<Network> datain){
 
         this.datain = datain;
     }
@@ -34,7 +34,7 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        SuccessfulConnection C = datain.get(position);
+        Network C = datain.get(position);
 
         holder.data0.setText(String.valueOf(C.getTimestamp()));
         holder.data1.setText(String.valueOf(C.getWifiName()));

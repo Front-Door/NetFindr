@@ -10,10 +10,11 @@
         android:id="@+id/header_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_margin="10dp"
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/hack_box"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
@@ -24,13 +25,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="0"
+                android:textSize="100dp"
+                android:textStyle="bold"
+                android:text="2"
                 android:textAlignment="center" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:textSize="25dp"
+                android:textStyle="bold"
                 android:text="Total Hacks"
                 android:textAlignment="center" />
 
@@ -45,15 +50,19 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="0"
+                android:textSize="100dp"
+                android:textStyle="bold"
+                android:text="9"
                 android:textAlignment="center" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:textSize="25dp"
+                android:textStyle="bold"
                 android:text="Total Networks"
                 android:textAlignment="center" />
 
@@ -65,19 +74,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/header_info"
-        android:layout_margin="20dp"
+        android:layout_margin="10dp"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Password"
+            android:textSize="38dp"
+            android:textStyle="bold"
+            android:text="mypassword123"
             android:textAlignment="center" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="25dp"
+            android:textStyle="bold"
             android:gravity="center_horizontal"
             android:text="Most Common Password"
             android:textAlignment="center" />
@@ -90,13 +103,14 @@
         android:layout_below="@id/secondary_header"
         android:orientation="vertical"
         android:layout_margin="20dp"
-        android:id="@+id/linearLayout">
-        android:orientation="vertical">
+        android:id="@+id/last_connect">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:textSize="25dp"
+            android:textStyle="bold"
             android:text="Last Connection Information"
             android:textAlignment="center" />
 
@@ -111,27 +125,37 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="SSID"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            android:text="SSID: MyWiFi"
             android:textAlignment="center" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Time Stamp"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            android:text="Time Stamp: 3:59pm 30/04/2016"
             android:textAlignment="center" />
 
     </LinearLayout>
 
-    <Button
-        android:onClick="startConnectionList"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="START LIST"
-        android:id="@+id/button1"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/linearLayout"
-        android:layout_alignStart="@+id/linearLayout" />
+        android:id="@+id/button_layout"
+        android:layout_below="@id/last_connect">
+        <Button
+            android:onClick="startConnectionList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="START LIST"
+            android:id="@+id/button1"
+            android:layout_alignParentBottom="true"
+            android:layout_alignLeft="@+id/button_layout"
+            android:layout_alignStart="@+id/button_layout" />
+    </LinearLayout>
 
 
 </RelativeLayout>

@@ -5,6 +5,10 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.StringBuilderPrinter;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 
 import java.util.Date;
 
@@ -22,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        LinearLayout ll = (LinearLayout) findViewById(R.id.hack_box);
+//        ll.setAlpha(0.3f);
 
         wifiServiceIntent = new Intent(this, WifiService.class);
         wifiServiceIntent.setData(Uri.parse("START"));
