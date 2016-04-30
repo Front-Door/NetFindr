@@ -12,6 +12,7 @@ import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Password;
 import nz.frontdoor.netfindr.services.Network;
 import android.view.Menu;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
