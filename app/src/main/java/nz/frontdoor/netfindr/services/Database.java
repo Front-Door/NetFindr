@@ -90,7 +90,7 @@ public class Database extends SQLiteOpenHelper {
      * Add a successful connection to the database
      * @param result
      */
-    public void addSuccessConnection(SuccessfulConnection result) {
+    public void addNetwork(Network result) {
         DateFormat format = SimpleDateFormat.getDateTimeInstance();
 
         ContentValues values = new ContentValues();
@@ -145,7 +145,7 @@ public class Database extends SQLiteOpenHelper {
         return passwords;
     }
 
-    public List<SuccessfulConnection> getSuccessfulConnections() {
+    public List<Network> getSuccessfulNetworks() {
         SQLiteDatabase db = getReadableDatabase();
 
         Cursor cursor = db.query(RESULTS_TABLE_NAME,
@@ -158,23 +158,77 @@ public class Database extends SQLiteOpenHelper {
                         RESULTS_SECURITY_NAME,
                         RESULTS_TIMESTAMP_NAME
                 },
-                null, null, null, null, null, null
+                RESULTS_PASSWORD_NAME + "!=?", new String[] {"0"}, null, null, null, null
         );
 
         cursor.moveToFirst();
 
 
-        List<SuccessfulConnection> connections = new ArrayList<>();
+        List<Network> connections = new ArrayList<>();
 
         // Check if there is no elements
         do {
-            connections.add(SuccessfulConnection.fromCursor(cursor));
+            connections.add(Network.fromCursor(cursor));
         } while (cursor.moveToNext());
 
         cursor.close();
         db.close();
 
         return connections;
+    }
+
+    public List<Network> getUnsuccessfulNetworks() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.query(RESULTS_TABLE_NAME,
+                new String [] {
+                        RESULTS_ID_NAME,
+                        RESULTS_WIFI_NAME,
+                        RESULTS_PASSWORD_NAME,
+                        RESULTS_LAT_NAME,
+                        RESULTS_LONG_NAME,
+                        RESULTS_SECURITY_NAME,
+                        RESULTS_TIMESTAMP_NAME
+                },
+                RESULTS_PASSWORD_NAME + "=?", new String[] {"0"}, null, null, null, null
+        );
+
+        cursor.moveToFirst();
+
+
+        List<Network> connections = new ArrayList<>();
+
+        // Check if there is no elements
+        do {
+            connections.add(Network.fromCursor(cursor));
+        } while (cursor.moveToNext());
+
+        cursor.close();
+        db.close();
+
+        return connections;
+    }
+
+    public int getNetworkCount() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + RESULTS_TABLE_NAME + ";", null);
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+
+        return count;
+    }
+
+    public int getPasswordCount() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + PASSWORDS_TABLE_NAME + ";", null);
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+
+        return count;
     }
 
     public Password getPasswordById(int id) {
@@ -186,7 +240,7 @@ public class Database extends SQLiteOpenHelper {
                         PASSWORD_PHRASE_NAME,
                         PASSWORD_RANK_NAME
                 },
-                PASSWORD_ID_NAME + "=?", new String[] { String.valueOf(id)}, null, null, null, null
+                PASSWORD_ID_NAME + "=?", new String[] { String.valueOf(id) }, null, null, null, null
         );
         cursor.moveToNext();
 
@@ -196,5 +250,21 @@ public class Database extends SQLiteOpenHelper {
         db.close();
 
         return password;
+    }
+
+    public boolean isKnownNetwork(String wifiName) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.query(RESULTS_TABLE_NAME,
+                new String [] {
+                        RESULTS_ID_NAME
+                },
+                RESULTS_WIFI_NAME + "=?", new String[] { wifiName }, null, null, null, null
+        );
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+
+        return count > 0;
     }
 }

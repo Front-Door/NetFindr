@@ -2,7 +2,6 @@ package nz.frontdoor.netfindr.services;
 
 import android.database.Cursor;
 
-import java.io.InvalidObjectException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,15 +10,15 @@ import java.util.Date;
 /**
  * Created by drb on 30/04/16.
  */
-public class SuccessfulConnection {
+public class Network {
 
     private final int id;
 
     private final String wifiName;
 
-    private final long latitude;
+    private final double latitude;
 
-    private final long longitude;
+    private final double longitude;
 
     private final String securityType;
 
@@ -29,17 +28,7 @@ public class SuccessfulConnection {
 
     private Password password;
 
-    public SuccessfulConnection(String wifiName, int passwordId, long latitude, long longitude, String securityType, Date timestamp) {
-        this.id = 0;
-        this.passwordId = passwordId;
-        this.wifiName = wifiName;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.securityType = securityType;
-        this.timestamp = timestamp;
-    }
-
-    private SuccessfulConnection(int id, String wifiName, int passwordId, long latitude, long longitude, String securityType, Date timestamp) {
+    private Network(int id, String wifiName, int passwordId, double latitude, double longitude, String securityType, Date timestamp) {
         this.id = id;
         this.passwordId = passwordId;
         this.wifiName = wifiName;
@@ -49,7 +38,52 @@ public class SuccessfulConnection {
         this.timestamp = timestamp;
     }
 
-    public static SuccessfulConnection fromCursor(Cursor cursor) {
+    /**
+     * Build a Network from a successful connection
+     *
+     * @param wifiName
+     * @param successful
+     * @param latitude
+     * @param longitude
+     * @param securityType
+     * @param timestamp
+     * @return
+     */
+    public static Network SuccessfulConnection(String wifiName, Password successful, double latitude, double longitude, String securityType, Date timestamp) {
+        return new Network(
+                0,
+                wifiName,
+                successful.getId(),
+                latitude,
+                longitude,
+                securityType,
+                timestamp
+        );
+    }
+
+    /**
+     * Build a network from an unsuccessful connection
+     *
+     * @param wifiName
+     * @param latitude
+     * @param longitude
+     * @param securityType
+     * @param timestamp
+     * @return
+     */
+    public static Network UnsuccessfulConnection(String wifiName, double latitude, double longitude, String securityType, Date timestamp) {
+        return new Network(
+                0,
+                wifiName,
+                0,
+                latitude,
+                longitude,
+                securityType,
+                timestamp
+        );
+    }
+
+    public static Network fromCursor(Cursor cursor) {
 
         DateFormat format = SimpleDateFormat.getDateTimeInstance();
         Date date;
@@ -59,12 +93,12 @@ public class SuccessfulConnection {
             throw new RuntimeException(ex);
         }
 
-        return new SuccessfulConnection(
+        return new Network(
                 cursor.getInt(0),
                 cursor.getString(1),
                 cursor.getInt(2),
-                cursor.getLong(3),
-                cursor.getLong(4),
+                cursor.getDouble(3),
+                cursor.getDouble(4),
                 cursor.getString(5),
                 date
         );
@@ -78,11 +112,11 @@ public class SuccessfulConnection {
         return wifiName;
     }
 
-    public long getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public long getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
@@ -104,7 +138,7 @@ public class SuccessfulConnection {
         }
 
         if (passwordId == 0) {
-            throw new RuntimeException();
+            return null;
         }
         password = db.getPasswordById(passwordId);
 
