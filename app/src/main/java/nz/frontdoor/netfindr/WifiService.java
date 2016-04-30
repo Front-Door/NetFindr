@@ -16,6 +16,7 @@ import android.widget.Toast;
  */
 public class WifiService extends IntentService {
     private static final String TAG = "WIFISERVICE";
+    public static Context context;
 
     public WifiService() {
         super("WifiService");
