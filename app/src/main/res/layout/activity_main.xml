@@ -26,7 +26,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="2"
+                    android:text="@string/default_num"
                     android:textAlignment="center"
                     android:textSize="@dimen/num_stats"
                     android:textStyle="bold" />
@@ -35,7 +35,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="Total Hacks"
+                    android:text="@string/hack_title"
                     android:textAlignment="center"
                     android:textSize="@dimen/main_page_text"
                     android:textStyle="bold" />
@@ -54,7 +54,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="9"
+                    android:text="@string/default_num"
                     android:textAlignment="center"
                     android:textSize="@dimen/num_stats"
                     android:textStyle="bold" />
@@ -63,7 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="Total Networks"
+                    android:text="@string/net_title"
                     android:textAlignment="center"
                     android:textSize="@dimen/main_page_text"
                     android:textStyle="bold" />
@@ -84,7 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="Unknown"
+                android:text="-"
                 android:textAlignment="center"
                 android:textSize="@dimen/password_info"
                 android:textStyle="bold" />
@@ -93,7 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="Most Common Password"
+                android:text="@string/pass_title"
                 android:textAlignment="center"
                 android:textSize="@dimen/main_page_text"
                 android:textStyle="bold" />
@@ -113,7 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="Last Connection Information"
+                android:text="@string/connect_title"
                 android:textAlignment="center"
                 android:textSize="@dimen/password_info"
                 android:textStyle="bold" />
@@ -130,7 +130,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="SSID: Unknown"
+                android:text="SSID: -"
                 android:textAlignment="center"
                 android:textSize="@dimen/main_page_text"
                 android:textStyle="bold" />
@@ -140,7 +140,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="Time Stamp: Unknown"
+                android:text="Time Stamp: -"
                 android:textAlignment="center"
                 android:textSize="@dimen/main_page_text"
                 android:textStyle="bold" />

@@ -132,4 +132,8 @@ public class MainActivity extends AppCompatActivity {
         mostRecent.putExtra("id", id);
         startActivity(mostRecent);
     }
+
+    public void onOffDialog(View v){
+
+    }
 }

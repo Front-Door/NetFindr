@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">NetFindr</string>
     <string name="settings">Settings</string>
+    <string name="default_num">0</string>
+    <string name="hack_title">Total Hacks</string>
+    <string name="net_title">Total Networks</string>
+    <string name="pass_title">Most Common Password</string>
+    <string name="connect_title">Last Connection Info</string>
 </resources>
