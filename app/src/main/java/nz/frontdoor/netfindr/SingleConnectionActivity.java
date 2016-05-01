@@ -35,6 +35,12 @@ public class SingleConnectionActivity extends AppCompatActivity {
             TextView ssid = (TextView) findViewById(R.id.ssid_data);
             ssid.setText(n.getWifiName());
 
+            TextView rank = (TextView) findViewById(R.id.rank_data);
+            rank.setText(n.getPassword(db).getRank());
+
+            TextView encrypt = (TextView) findViewById(R.id.encryption_data);
+            encrypt.setText(n.getSecurityType());
+
             TextView timestamp = (TextView) findViewById(R.id.time_data);
             DateFormat format = SimpleDateFormat.getDateInstance();
             timestamp.setText(""+format.format(n.getTimestamp()));
