@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Password;
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
             Log.d("db", pass.getPhrase());
             passwd = pass;
         }
+
+        db.addNetwork(Network.SuccessfulConnection("Elf's Super Secret Network", passwd, 0.10, 23.45, "Open", new Date()));
 
         for (Network conn : db.getSuccessfulNetworks()) {
             Log.d("db", "wifi:" + conn.getWifiName());
@@ -129,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
         if(db.getMostRecentSuccessfulNetwork() != null){
             id = db.getMostRecentSuccessfulNetwork().getId();
         }
-        Log.d("Main Actvity", "First"+id);
         Intent mostRecent = new Intent(this, SingleConnectionActivity.class);
         mostRecent.putExtra("id", id);
         startActivity(mostRecent);
