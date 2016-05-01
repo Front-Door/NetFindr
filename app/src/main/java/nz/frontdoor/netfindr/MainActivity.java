@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Password;
@@ -53,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d("db", pass.getPhrase());
             passwd = pass;
         }
+
+        //Log.d("db", "know wifi? " + db.isKnownNetwork("Poorly secure Wifi"));
+        //db.addNetwork(Network.SuccessfulConnection("Poorly secure Wifi", passwd, 234.0, 34.034534, "WPA", new Date()));
+        //db.addNetwork(Network.UnsuccessfulConnection("Secure WiFi", 40.2, 150.2, "WPA", new Date()));
+        //Log.d("db", "know wifi? " + db.isKnownNetwork("Poorly secure Wifi"));
 
         for (Network conn : db.getSuccessfulNetworks()) {
             Log.d("db", "wifi:" + conn.getWifiName());

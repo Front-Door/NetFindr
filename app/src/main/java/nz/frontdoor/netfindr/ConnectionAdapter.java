@@ -43,7 +43,7 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.Vi
         holder.data0.setText(SD.format(C.getTimestamp()));
         holder.data1.setText(String.valueOf(C.getWifiName()));
         holder.data2.setText(String.valueOf(C.getSecurityType()));
-        holder.data2.setText(String.valueOf(C.getPassword(db)));
+        holder.data3.setText(String.valueOf(C.getPassword(db).getPhrase()));
         //holder.data3.setText(String.valueOf(C.getLatitude())+"N "+String.valueOf(C.getLongitude())+"E");
     }
 
