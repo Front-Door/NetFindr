@@ -28,7 +28,7 @@
                 android:layout_weight="1"
                 android:text="SSID"
                 android:textAlignment="center"
-                android:textSize="@dimen/password_info"
+                android:textSize="@dimen/single_page_text"
                 android:textStyle="bold" />
 
             <TextView
@@ -38,7 +38,7 @@
                 android:layout_weight="1"
                 android:text="TIME"
                 android:textAlignment="center"
-                android:textSize="@dimen/password_info"
+                android:textSize="@dimen/single_page_text"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -53,6 +53,7 @@
                 android:id="@+id/ssid_data"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/gap"
                 android:layout_weight="1"
                 android:textAlignment="center"
                 android:textSize="@dimen/single_page_data"
@@ -62,6 +63,7 @@
                 android:id="@+id/time_data"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/gap"
                 android:layout_weight="1"
                 android:textAlignment="center"
                 android:textSize="@dimen/single_page_data"
@@ -73,13 +75,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="50dp">
+        android:marginTop="@dimen/large_gap">
 
         <LinearLayout
 
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="0.75"
             android:orientation="vertical">
 
 
@@ -87,24 +89,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Rank:"
-                android:textSize="20dp">
+                android:textStyle="bold"
+                android:textSize="@dimen/single_page_text">
 
             </TextView>
 
             <TextView
-                android:id="@+id/password_single_data"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="PassWord:"
-                android:textSize="20dp"></TextView>
+                android:textStyle="bold"
+                android:textSize="@dimen/single_page_text"></TextView>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Encryption:"
-                android:textSize="20dp"></TextView>
-
-
+                android:textStyle="bold"
+                android:textSize="@dimen/single_page_text"></TextView>
         </LinearLayout>
 
         <LinearLayout
@@ -114,30 +116,41 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/rank_data"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
-                tools:text="DATA3" />
-            android:id="@+id/connection_data3"
+                android:textSize="@dimen/single_page_text"
+                tools:text="-" />
 
             <TextView
-                android:id="@+id/connection_data4"
+                android:id="@+id/password_single_data"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
-
-                tools:text="DATA4" />
+                android:textSize="@dimen/single_page_text"
+                tools:text="-" />
 
             <TextView
-                android:id="@+id/connection_data5"
+                android:id="@+id/encryption_data"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
-
-                tools:text="DATA5" />
+                android:textSize="@dimen/single_page_text"
+                tools:text="-" />
 
         </LinearLayout>
 
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/large_gap">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Location"
+            android:textAlignment="center"
+            android:textSize="@dimen/single_page_text"
+            android:textStyle="bold" />
     </LinearLayout>
 
 

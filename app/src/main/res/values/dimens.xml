@@ -5,6 +5,8 @@
     <dimen name="num_stats">60sp</dimen>
     <dimen name="main_page_text">15sp</dimen>
     <dimen name="password_info">20sp</dimen>
-    <dimen name="single_page_data">40sp</dimen>
+    <dimen name="single_page_data">30sp</dimen>
+    <dimen name="single_page_text">25sp</dimen>
     <dimen name="gap">5dp</dimen>
+    <dimen name="large_gap">15dp</dimen>
 </resources>

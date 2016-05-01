@@ -33,11 +33,11 @@ public class SingleConnectionActivity extends AppCompatActivity {
             password.setText(n.getPassword(db).getPhrase());
 
             TextView ssid = (TextView) findViewById(R.id.ssid_data);
-            ssid.setText("SSID: " + n.getWifiName());
+            ssid.setText(n.getWifiName());
 
             TextView timestamp = (TextView) findViewById(R.id.time_data);
             DateFormat format = SimpleDateFormat.getDateInstance();
-            timestamp.setText("Time Stamp: " + format.format(n.getTimestamp()));
+            timestamp.setText(""+format.format(n.getTimestamp()));
         }
     }
 }
