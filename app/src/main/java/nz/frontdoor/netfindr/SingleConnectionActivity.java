@@ -41,6 +41,9 @@ public class SingleConnectionActivity extends AppCompatActivity {
             TextView encrypt = (TextView) findViewById(R.id.encryption_data);
             encrypt.setText(n.getSecurityType());
 
+            TextView loc = (TextView) findViewById(R.id.lat_long_data);
+            loc.setText("" + n.getLatitude() + "°S, " + n.getLongitude() + "°E");
+
             TextView timestamp = (TextView) findViewById(R.id.time_data);
             DateFormat format = SimpleDateFormat.getDateInstance();
             timestamp.setText(""+format.format(n.getTimestamp()));
