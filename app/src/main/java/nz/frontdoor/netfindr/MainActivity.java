@@ -42,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions((Activity) this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
 
         WifiService.context = getApplicationContext();
-        wifiServiceIntent = new Intent(this, WifiService.class);
-        wifiServiceIntent.setData(Uri.parse("START"));
+
         //MainActivity.this.startService(wifiServiceIntent);
 
         BroadcastReceiver wifiServiceReciver = new BroadcastReceiver() {
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         };
         getBaseContext().registerReceiver(wifiServiceReciver, new IntentFilter(WifiService.BROADCAST_ACTION));
         Database db = new Database(getApplicationContext());
-        db.clearNetworks();
+        // db.clearNetworks();
 
         Password passwd = null;
         for (Password pass : db.getPasswords()) {
@@ -66,9 +65,11 @@ public class MainActivity extends AppCompatActivity {
             passwd = pass;
         }
 
+         /*
         db.addNetwork(Network.SuccessfulConnection("Elf's Super Secret Network", passwd, 0.10, 23.45, "Open", new Date()));
         db.addNetwork(Network.SuccessfulConnection("Poorly secure Wifi", passwd, 234.0, 34.034534, "WPA", new Date()));
         db.addNetwork(Network.UnsuccessfulConnection("Secure WiFi", 40.2, 150.2, "WPA", new Date()));
+        */
 
         for (Network conn : db.getSuccessfulNetworks()) {
             Log.d("db", "wifi:" + conn.getWifiName());
@@ -116,10 +117,18 @@ public class MainActivity extends AppCompatActivity {
                 if(isChecked){
                     //TODO start hacking
                     Toast.makeText(getBaseContext(), "Start Scanning", Toast.LENGTH_SHORT).show();
+
+                    wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
+                    wifiServiceIntent.setData(Uri.parse("START"));
+                    MainActivity.this.startService(wifiServiceIntent);
                 }
                 else {
                     // TODO stop hacking
                     Toast.makeText(getBaseContext(), "Stop Scanning", Toast.LENGTH_SHORT).show();
+
+                    wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
+                    wifiServiceIntent.setData(Uri.parse("START"));
+                    MainActivity.this.stopService(wifiServiceIntent);
                 }
             }
         });
@@ -128,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getTitle().equals("Settings")){
+        if(item.getTitle().equals("Settings")) {
 
         }
         return true;
@@ -136,11 +145,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void startConnectionList(View v) {
         Intent newList = new Intent(this, ConnectionListActivity.class);
-        startActivity(newList);
-    }
-
-    public void startConnectionList2(View v) {
-        Intent newList = new Intent(this, SingleConnectionActivity.class);
         startActivity(newList);
     }
 

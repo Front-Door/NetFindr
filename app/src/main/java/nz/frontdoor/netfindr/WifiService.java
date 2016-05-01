@@ -200,7 +200,7 @@ public class WifiService extends IntentService {
             }
 
             Log.v(TAG, "Scanning Network -> " + sr.SSID);
-            boolean success = false;
+
 
             SECURITY_TYPE security_type = getSecurityType(sr);
             Log.d(TAG, "Network Security -> " + security_type.toString());
@@ -215,6 +215,7 @@ public class WifiService extends IntentService {
                 continue;
             }
 
+            boolean success = false;
             for (Password password : passwords) {
                 WifiConfiguration wifiConfiguration = new WifiConfiguration();
                 wifiConfiguration.SSID = String.format("\"%s\"", sr.SSID);
@@ -260,8 +261,7 @@ public class WifiService extends IntentService {
                         sr.SSID,
                         0, 0,
                         security_type.toString(),
-                        new Date()
-                ));
+                        new Date()));
 
                 wifi.removeNetwork(id);
                 sendBroadcast();
