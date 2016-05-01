@@ -244,11 +244,11 @@ public class WifiService extends IntentService {
             for (Password password : passwords) {
                 if (!running) {
                     Log.d(TAG, "Short cut out of passwords");
-                    sendBroadcast("", "");
+                    sendBroadcastMessage(null, null);
                     break;
                 }
 
-                sendBroadcast(sr.SSID, password.getPhrase());
+                sendBroadcastMessage(sr.SSID, password.getPhrase());
 
                 WifiConfiguration wifiConfiguration = new WifiConfiguration();
                 wifiConfiguration.SSID = String.format("\"%s\"", sr.SSID);
@@ -288,13 +288,13 @@ public class WifiService extends IntentService {
                                 new Date()
                         ));
 
-                        sendBroadcast(sr.SSID, password.getPhrase());
+                        sendBroadcastMessage(sr.SSID, password.getPhrase());
                         wifi.removeNetwork(id);
                         break;
                     } else {
                         Log.v(TAG, "Network Not Hacked, SSID -> " + sr.SSID + ", password -> " + password.getPhrase());
                         wifi.removeNetwork(id);
-                        sendBroadcast(sr.SSID, password.getPhrase());
+                        sendBroadcastMessage(sr.SSID, password.getPhrase());
                     }
                 }
             }
@@ -316,7 +316,7 @@ public class WifiService extends IntentService {
                         new Date()));
 
                 wifi.removeNetwork(id);
-                sendBroadcast(sr.SSID, "");
+                sendBroadcastMessage(sr.SSID, "");
             }
         }
     }
@@ -356,8 +356,14 @@ public class WifiService extends IntentService {
         return locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
     }
 
-    private void sendBroadcast(String ssid, String password) {
-        Intent localIntent = new Intent(WifiService.BROADCAST_ACTION).putExtra(WifiService.EXTENDED_DATA_STATUS, "Attempting " + ssid + " with " + password);
+    private void sendBroadcastMessage(String ssid, String password) {
+        String s = "STOPPED";
+
+        if (ssid != null) {
+            s = "Attempting " + ssid + " with " + password;
+        }
+
+        Intent localIntent = new Intent(WifiService.BROADCAST_ACTION).putExtra(WifiService.EXTENDED_DATA_STATUS, s);
         LocalBroadcastManager.getInstance(context).sendBroadcast(localIntent);
     }
 

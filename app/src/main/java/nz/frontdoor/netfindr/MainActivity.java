@@ -55,6 +55,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 updateStatistics();
+                String s = intent.getStringExtra(WifiService.EXTENDED_DATA_STATUS);
+
+                TextView status = (TextView) findViewById(R.id.current_status);
+
+                if (s != null) {
+                    status.setText(s);
+                } else {
+                    status.setText("");
+                }
             }
         };
 
