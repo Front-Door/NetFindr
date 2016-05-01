@@ -40,11 +40,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ActivityCompat.requestPermissions((Activity) this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+        ActivityCompat.requestPermissions((Activity) this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
 
         WifiService.context = getApplicationContext();
-
-        //MainActivity.this.startService(wifiServiceIntent);
 
         BroadcastReceiver wifiServiceReciver = new BroadcastReceiver() {
             @Override

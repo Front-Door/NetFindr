@@ -46,6 +46,8 @@ public class WifiService extends IntentService {
     private List<ScanResult> networks;
     private List<Password> passwords;
 
+    private LocationManager locationManager;
+    private Location location;
     private WifiManager wifi;
     private BroadcastReceiver wifiScanReciver;
     private BroadcastReceiver wifiConnectionReciver;
@@ -73,6 +75,11 @@ public class WifiService extends IntentService {
         super("WifiService");
         Log.v(TAG, "Service Created");
 
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            throw new RuntimeException();
+        }
+
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         networks = new ArrayList<>();
         database = new Database(context);
         passwords = database.getPasswords();
@@ -238,10 +245,11 @@ public class WifiService extends IntentService {
                         success = true;
                         Log.v(TAG, "Network Hacked!, SSID -> " + sr.SSID + ", password -> " + password.getPhrase());
 
+                        Location l = getLocation();
                         database.addNetwork(Network.SuccessfulConnection(
                                 sr.SSID,
                                 password,
-                                0, 0,
+                                l.getLatitude(), l.getLongitude(),
                                 security_type.toString(),
                                 new Date()
                         ));
@@ -257,9 +265,10 @@ public class WifiService extends IntentService {
                 }
             }
             if (!success) {
+                Location l = getLocation();
                 database.addNetwork(Network.UnsuccessfulConnection(
                         sr.SSID,
-                        0, 0,
+                        l.getLatitude(), l.getLongitude(),
                         security_type.toString(),
                         new Date()));
 
@@ -297,6 +306,11 @@ public class WifiService extends IntentService {
         Log.v(TAG, "Scan Completed -> " + scanResults.size() + " networks found, " + u + " uniquic. [total = " + networks.size() + "]");
     }
 
+    private Location getLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            throw new RuntimeException();
+        }
+        return locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
     private void sendBroadcast() {
         Intent localIntent = new Intent(WifiService.BROADCAST_ACTION).putExtra(WifiService.EXTENDED_DATA_STATUS, "ALIVE");
         LocalBroadcastManager.getInstance(context).sendBroadcast(localIntent);
