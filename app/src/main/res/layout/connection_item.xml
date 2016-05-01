@@ -6,7 +6,9 @@
     android:layout_marginBottom="8dp"
     android:background="@color/listBackround"
     android:orientation="horizontal"
+    android:id="@+id/connection_item"
     android:padding="16dp">
+
 
     <TextView
         android:id="@+id/time_data0"
