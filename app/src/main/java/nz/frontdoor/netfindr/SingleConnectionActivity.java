@@ -2,7 +2,6 @@ package nz.frontdoor.netfindr;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,17 +26,26 @@ public class SingleConnectionActivity extends AppCompatActivity {
         }
         else {
             setContentView(R.layout.activity_single_connection);
-            Network n = db.getNetworkdById(id);
+            Network n = db.getNetworkById(id);
 
             TextView password = (TextView) findViewById(R.id.password_single_data);
             password.setText(n.getPassword(db).getPhrase());
 
             TextView ssid = (TextView) findViewById(R.id.ssid_data);
-            ssid.setText("SSID: " + n.getWifiName());
+            ssid.setText(n.getWifiName());
+
+            TextView rank = (TextView) findViewById(R.id.rank_data);
+            rank.setText(""+n.getPassword(db).getRank());
+
+            TextView encrypt = (TextView) findViewById(R.id.encryption_data);
+            encrypt.setText(n.getSecurityType());
+
+            TextView loc = (TextView) findViewById(R.id.lat_long_data);
+            loc.setText("" + n.getLatitude() + "°S, " + n.getLongitude() + "°E");
 
             TextView timestamp = (TextView) findViewById(R.id.time_data);
             DateFormat format = SimpleDateFormat.getDateInstance();
-            timestamp.setText("Time Stamp: " + format.format(n.getTimestamp()));
+            timestamp.setText(""+format.format(n.getTimestamp()));
         }
     }
 }

@@ -1,29 +1,26 @@
 package nz.frontdoor.netfindr;
 
+import android.Manifest;
 import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.Context;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Network;
@@ -41,6 +38,9 @@ public class WifiService extends IntentService {
     public static final String EXTENDED_DATA_STATUS = "nz.frontdoor.netfindr.STATUS";
 
     private static final String TAG = "WIFISERVICE";
+    public static final String START_SERVICE = "START";
+    public static final String STOP_SERVICE = "STOP";
+
     public static Context context;
 
     private List<ScanResult> networks;
@@ -57,6 +57,8 @@ public class WifiService extends IntentService {
     private CONNECTION_ATTEMPT_RESULT currentRes;
     private ThreadEvent scanComplete = new ThreadEvent();
     private Database database;
+
+    private boolean running;
 
     private enum CONNECTION_ATTEMPT_RESULT {
         SUCCESS,
@@ -166,18 +168,34 @@ public class WifiService extends IntentService {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.v(TAG, "Stopped service");
+
+        running = false;
+    }
+
+    @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
             Log.v(TAG, "Action Received: " + action);
 
-            if (wifi.isWifiEnabled() == false) {
-                Log.v(TAG, "Wifi was disabled... Enabling");
-                Toast.makeText(context, "Wifi is Disabled... Enabling", Toast.LENGTH_LONG).show();
-                wifi.setWifiEnabled(true);
-            }
+            if (action.equals(START_SERVICE)) {
+                running = true;
+                if (wifi.isWifiEnabled() == false) {
+                    Log.v(TAG, "Wifi was disabled... Enabling");
+                    Toast.makeText(context, "Wifi is Disabled... Enabling", Toast.LENGTH_LONG).show();
+                    wifi.setWifiEnabled(true);
+                }
+                Log.v(TAG, "Start service");
+                SUPRHAKRFUNC();
 
-            SUPRHAKRFUNC();
+            } else {
+
+                Log.v(TAG, "Stopped service");
+                running = false;
+            }
         }
     }
 
@@ -187,7 +205,7 @@ public class WifiService extends IntentService {
         Log.v(TAG, "Scan Status -> " + s);
 
 
-        while (true) {
+        while (running) {
             int id = -1;
             scanNetworks();
 
@@ -224,6 +242,11 @@ public class WifiService extends IntentService {
 
             boolean success = false;
             for (Password password : passwords) {
+                if (!running) {
+                    Log.d(TAG, "Short cut out of passwords");
+                    break;
+                }
+
                 WifiConfiguration wifiConfiguration = new WifiConfiguration();
                 wifiConfiguration.SSID = String.format("\"%s\"", sr.SSID);
                 wifiConfiguration.preSharedKey = String.format("\"%s\"", password.getPhrase());
@@ -264,7 +287,7 @@ public class WifiService extends IntentService {
                     }
                 }
             }
-            if (!success) {
+            if (!success && running) {
                 Location l = getLocation();
                 database.addNetwork(Network.UnsuccessfulConnection(
                         sr.SSID,
@@ -311,6 +334,8 @@ public class WifiService extends IntentService {
             throw new RuntimeException();
         }
         return locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+    }
+
     private void sendBroadcast() {
         Intent localIntent = new Intent(WifiService.BROADCAST_ACTION).putExtra(WifiService.EXTENDED_DATA_STATUS, "ALIVE");
         LocalBroadcastManager.getInstance(context).sendBroadcast(localIntent);

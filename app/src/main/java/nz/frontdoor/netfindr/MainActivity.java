@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -20,12 +19,10 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Password;
 import nz.frontdoor.netfindr.services.Network;
-import nz.frontdoor.netfindr.services.SingleConnectionInfo;
 
 import android.view.Menu;
 import android.view.View;
@@ -47,9 +44,10 @@ public class MainActivity extends AppCompatActivity {
         BroadcastReceiver wifiServiceReciver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                // TODO: Update UI
+                updateStatistics();
             }
         };
+
         LocalBroadcastManager.getInstance(this).registerReceiver(wifiServiceReciver, new IntentFilter(WifiService.BROADCAST_ACTION));
         Database db = new Database(getApplicationContext());
         // db.clearNetworks();
@@ -62,13 +60,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d("db", pass.getPhrase());
             passwd = pass;
         }
-
-         /*
+/*
         db.addNetwork(Network.SuccessfulConnection("Elf's Super Secret Network", passwd, 0.10, 23.45, "Open", new Date()));
         db.addNetwork(Network.SuccessfulConnection("Poorly secure Wifi", passwd, 234.0, 34.034534, "WPA", new Date()));
         db.addNetwork(Network.UnsuccessfulConnection("Secure WiFi", 40.2, 150.2, "WPA", new Date()));
-        */
-
+*/
         for (Network conn : db.getSuccessfulNetworks()) {
             Log.d("db", "wifi:" + conn.getWifiName());
             Log.d("db", "loc:" + conn.getLongitude() + ":" + conn.getLatitude());
@@ -78,6 +74,12 @@ public class MainActivity extends AppCompatActivity {
         for (Network conn : db.getUnsuccessfulNetworks()) {
             Log.d("db", "unsuccessful wifi:" + conn.getWifiName());
         }
+
+        updateStatistics();
+    }
+
+    public void updateStatistics() {
+        Database db = new Database(getApplicationContext());
 
         TextView hackCount = (TextView) findViewById(R.id.total_hacks);
         hackCount.setText("" + db.getSuccessfulNetworks().size());
@@ -112,20 +114,20 @@ public class MainActivity extends AppCompatActivity {
         toggle_scanner.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if(isChecked) {
                     //TODO start hacking
                     Toast.makeText(getBaseContext(), "Start Scanning", Toast.LENGTH_SHORT).show();
 
-                    wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
-                    wifiServiceIntent.setData(Uri.parse("START"));
+                    Intent wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
+                    wifiServiceIntent.setAction(WifiService.START_SERVICE);
                     MainActivity.this.startService(wifiServiceIntent);
                 }
                 else {
                     // TODO stop hacking
                     Toast.makeText(getBaseContext(), "Stop Scanning", Toast.LENGTH_SHORT).show();
 
-                    wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
-                    wifiServiceIntent.setData(Uri.parse("START"));
+                    Intent wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
+                    wifiServiceIntent.setAction(WifiService.STOP_SERVICE);
                     MainActivity.this.stopService(wifiServiceIntent);
                 }
             }
@@ -142,8 +144,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startConnectionList(View v) {
-        Intent newList = new Intent(this, ConnectionListActivity.class);
-        startActivity(newList);
+        Database db = new Database(getApplicationContext());
+        db.getSuccessfulNetworks();
+        if(db.getSuccessfulNetworks().isEmpty()){
+            Toast.makeText(getBaseContext(), "No Successful Connections Yet", Toast.LENGTH_LONG). show();
+        }else {
+            Intent newList = new Intent(this, ConnectionListActivity.class);
+            startActivity(newList);
+        }
     }
 
     public void viewMostRecent(View v) {
@@ -151,9 +159,12 @@ public class MainActivity extends AppCompatActivity {
         int id = -1;
         if(db.getMostRecentSuccessfulNetwork() != null){
             id = db.getMostRecentSuccessfulNetwork().getId();
+            Intent mostRecent = new Intent(this, SingleConnectionActivity.class);
+            mostRecent.putExtra("id", id);
+            startActivity(mostRecent);
         }
-        Intent mostRecent = new Intent(this, SingleConnectionActivity.class);
-        mostRecent.putExtra("id", id);
-        startActivity(mostRecent);
+        else {
+            Toast.makeText(getBaseContext(), "No Recent Connections", Toast.LENGTH_LONG). show();
+        }
     }
 }
