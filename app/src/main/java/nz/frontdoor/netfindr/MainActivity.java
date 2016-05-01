@@ -36,6 +36,14 @@ public class MainActivity extends AppCompatActivity {
         wifiServiceIntent.setData(Uri.parse("START"));
         MainActivity.this.startService(wifiServiceIntent);
 
+        BroadcastReceiver wifiServiceReciver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // TODO
+                Log.v("GAIDFHWAODHJW", "ALIVE");
+            }
+        };
+        getBaseContext().registerReceiver(wifiServiceReciver, new IntentFilter(WifiService.BROADCAST_ACTION));
         Database db = new Database(getApplicationContext());
         db.clearNetworks();
 
