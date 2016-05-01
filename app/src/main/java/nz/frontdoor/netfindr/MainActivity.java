@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
@@ -48,11 +49,10 @@ public class MainActivity extends AppCompatActivity {
         BroadcastReceiver wifiServiceReciver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                // TODO
-                Log.v("GAIDFHWAODHJW", "ALIVE");
+                // TODO: Update UI
             }
         };
-        getBaseContext().registerReceiver(wifiServiceReciver, new IntentFilter(WifiService.BROADCAST_ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(wifiServiceReciver, new IntentFilter(WifiService.BROADCAST_ACTION));
         Database db = new Database(getApplicationContext());
         // db.clearNetworks();
 
@@ -142,8 +142,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startConnectionList(View v) {
-        Intent newList = new Intent(this, ConnectionListActivity.class);
-        startActivity(newList);
+        Database db = new Database(getApplicationContext());
+        db.getSuccessfulNetworks();
+        if(db.getSuccessfulNetworks().isEmpty()){
+            Toast.makeText(getBaseContext(), "No Successful connections to show", Toast.LENGTH_LONG). show();
+        }else {
+            Intent newList = new Intent(this, ConnectionListActivity.class);
+            startActivity(newList);
+        }
     }
 
     public void viewMostRecent(View v) {
