@@ -271,11 +271,19 @@ public class WifiService extends IntentService {
                         success = true;
                         Log.v(TAG, "Network Hacked!, SSID -> " + sr.SSID + ", password -> " + password.getPhrase());
 
+                        double lat = 0;
+                        double lng = 0;
                         Location l = getLocation();
+
+                        if (l != null) {
+                            lat = l.getLatitude();
+                            lng = l.getLongitude();
+                        }
+
                         database.addNetwork(Network.SuccessfulConnection(
                                 sr.SSID,
                                 password,
-                                l.getLatitude(), l.getLongitude(),
+                                lat, lng,
                                 security_type.toString(),
                                 new Date()
                         ));
@@ -291,10 +299,19 @@ public class WifiService extends IntentService {
                 }
             }
             if (!success && running) {
+
+                double lat = 0;
+                double lng = 0;
                 Location l = getLocation();
+
+                if (l != null) {
+                    lat = l.getLatitude();
+                    lng = l.getLongitude();
+                }
+
                 database.addNetwork(Network.UnsuccessfulConnection(
                         sr.SSID,
-                        l.getLatitude(), l.getLongitude(),
+                        lat, lng,
                         security_type.toString(),
                         new Date()));
 
