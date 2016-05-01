@@ -10,19 +10,21 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Network;
 
 /**
  * Created by Jack on 30/04/2016.
  */
 public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.ViewHolder> {
-
+    Database db;
     SimpleDateFormat SD = new SimpleDateFormat("KK:mm a dd/MM/yy ");
     private List<Network> datain;
 
-    public ConnectionAdapter(List<Network> datain){
+    public ConnectionAdapter(Database db){
+        this.db = db;
+        this.datain = this.db.getSuccessfulNetworks();
 
-        this.datain = datain;
     }
 
     @Override
@@ -41,7 +43,8 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.Vi
         holder.data0.setText(SD.format(C.getTimestamp()));
         holder.data1.setText(String.valueOf(C.getWifiName()));
         holder.data2.setText(String.valueOf(C.getSecurityType()));
-        holder.data3.setText(String.valueOf(C.getLatitude())+"N "+String.valueOf(C.getLongitude())+"E");
+        holder.data2.setText(String.valueOf(C.getPassword(db)));
+        //holder.data3.setText(String.valueOf(C.getLatitude())+"N "+String.valueOf(C.getLongitude())+"E");
     }
 
     @Override

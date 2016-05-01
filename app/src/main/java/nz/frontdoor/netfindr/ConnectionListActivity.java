@@ -21,7 +21,7 @@ public class ConnectionListActivity extends AppCompatActivity {
 
         mainList.setLayoutManager(new LinearLayoutManager(this));
         Database db = new Database(getApplicationContext());
-        mainList.setAdapter(new ConnectionAdapter(db.getSuccessfulNetworks()));
+        mainList.setAdapter(new ConnectionAdapter(db));
         updateList();
     }
 
