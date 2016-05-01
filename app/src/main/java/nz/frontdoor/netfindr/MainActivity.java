@@ -144,8 +144,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startConnectionList(View v) {
-        Intent newList = new Intent(this, ConnectionListActivity.class);
-        startActivity(newList);
+        Database db = new Database(getApplicationContext());
+        db.getSuccessfulNetworks();
+        if(db.getSuccessfulNetworks().isEmpty()){
+            Toast.makeText(getBaseContext(), "No Successful connections to show", Toast.LENGTH_LONG). show();
+        }else {
+            Intent newList = new Intent(this, ConnectionListActivity.class);
+            startActivity(newList);
+        }
     }
 
     public void viewMostRecent(View v) {
