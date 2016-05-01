@@ -120,11 +120,12 @@
                 android:textStyle="bold" />
 
             <ImageView
+                android:id="@+id/most_recent_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:scaleType="centerInside"
-                android:src="@drawable/vic" />
+                android:src="@drawable/no_image" />
 
             <TextView
                 android:id="@+id/ssid"
@@ -152,7 +153,8 @@
             android:id="@+id/button_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/last_connect">
+            android:layout_below="@id/last_connect"
+            android:orientation="vertical">
 
             <Button
                 android:text="All Data"
@@ -162,7 +164,23 @@
                 android:layout_height="wrap_content"
                 android:onClick="startConnectionList"/>
 
+            <TextView
+                android:layout_marginTop="@dimen/gap"
+                android:text="Current Status:"
+                android:textAlignment="center"
+                android:textColor="@color/darktext"
+                android:textSize="@dimen/main_page_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
+            <TextView
+                android:text="-"
+                android:textAlignment="center"
+                android:textColor="@color/darktext"
+                android:id="@+id/current_status"
+                android:textSize="@dimen/main_page_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
     </RelativeLayout>

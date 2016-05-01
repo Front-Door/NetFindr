@@ -162,11 +162,12 @@
             android:textStyle="bold" />
 
         <ImageView
+            android:id="@+id/single_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/large_gap"
             android:adjustViewBounds="true"
-            android:src="@drawable/vic"/>
+            android:src="@drawable/error"/>
     </LinearLayout>
 
 </LinearLayout>

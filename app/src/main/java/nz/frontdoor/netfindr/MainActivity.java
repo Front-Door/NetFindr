@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -15,9 +16,14 @@ import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,6 +36,8 @@ import nz.frontdoor.netfindr.services.SingleConnectionInfo;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,9 +73,7 @@ public class MainActivity extends AppCompatActivity {
             passwd = pass;
         }
 
-        db.addNetwork(Network.SuccessfulConnection("Elf's Super Secret Network", passwd, 0.10, 23.45, "Open", new Date()));
-        db.addNetwork(Network.SuccessfulConnection("Poorly secure Wifi", passwd, 234.0, 34.034534, "WPA", new Date()));
-        db.addNetwork(Network.UnsuccessfulConnection("Secure WiFi", 40.2, 150.2, "WPA", new Date()));
+        db.addNetwork(Network.SuccessfulConnection("Elf's Super Secret Network", passwd, -41.2442852, 174.8, "Open", new Date()));
 
         for (Network conn : db.getSuccessfulNetworks()) {
             Log.d("db", "wifi:" + conn.getWifiName());
@@ -98,6 +104,23 @@ public class MainActivity extends AppCompatActivity {
             TextView timestamp = (TextView) findViewById(R.id.timestamp1);
             DateFormat format = SimpleDateFormat.getDateInstance();
             timestamp.setText("Time Stamp: " + format.format(recent.getTimestamp()));
+
+
+            ImageView image = (ImageView) findViewById(R.id.most_recent_image);
+            String url = "https://maps.googleapis.com/maps/api/staticmap?center=" + recent.getLatitude()
+                    + "," + recent.getLongitude() + "&zoom=15&size=588x320";
+
+            Picasso.Builder builder = new Picasso.Builder(this);
+            builder.listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                    exception.printStackTrace();
+                }
+            });
+            builder.build().load(url)
+                    .placeholder(R.drawable.no_image)
+                    .error(R.drawable.error)
+                    .into(image);
         }
 
 

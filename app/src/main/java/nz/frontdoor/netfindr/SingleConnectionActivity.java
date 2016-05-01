@@ -1,9 +1,13 @@
 package nz.frontdoor.netfindr;
 
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -46,6 +50,23 @@ public class SingleConnectionActivity extends AppCompatActivity {
             TextView timestamp = (TextView) findViewById(R.id.time_data);
             DateFormat format = SimpleDateFormat.getDateInstance();
             timestamp.setText(""+format.format(n.getTimestamp()));
+
+            ImageView image = (ImageView) findViewById(R.id.single_image);
+            String url = "https://maps.googleapis.com/maps/api/staticmap?center=" + n.getLatitude()
+                    + "," + n.getLongitude() + "&zoom=15&size=588x320";
+
+            Picasso.Builder builder = new Picasso.Builder(this);
+            builder.listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                    exception.printStackTrace();
+                }
+            });
+
+            builder.build().load(url)
+                    .placeholder(R.drawable.no_image)
+                    .error(R.drawable.error)
+                    .into(image);
         }
     }
 }
