@@ -36,7 +36,7 @@ public class SingleConnectionActivity extends AppCompatActivity {
             ssid.setText(n.getWifiName());
 
             TextView rank = (TextView) findViewById(R.id.rank_data);
-            rank.setText(n.getPassword(db).getRank());
+            rank.setText(""+n.getPassword(db).getRank());
 
             TextView encrypt = (TextView) findViewById(R.id.encryption_data);
             encrypt.setText(n.getSecurityType());
