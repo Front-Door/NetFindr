@@ -4,14 +4,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 import android.widget.ListView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import nz.frontdoor.netfindr.services.Database;
+import nz.frontdoor.netfindr.services.Network;
 
-public class ConnectionListActivity extends AppCompatActivity {
+public class ConnectionListActivity extends AppCompatActivity implements ConnectionAdapter.OnNetWorkClickedListner {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +23,7 @@ public class ConnectionListActivity extends AppCompatActivity {
 
         mainList.setLayoutManager(new LinearLayoutManager(this));
         Database db = new Database(getApplicationContext());
-        mainList.setAdapter(new ConnectionAdapter(db.getSuccessfulNetworks()));
+        mainList.setAdapter(new ConnectionAdapter(db,this));
         updateList();
     }
 
@@ -36,6 +38,11 @@ public class ConnectionListActivity extends AppCompatActivity {
     }
 
     public void updateList(){
+
+    }
+
+    @Override
+    public void onNetWorkClicked(Network netWork) {
 
     }
 }

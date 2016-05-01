@@ -7,18 +7,25 @@ import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
+import android.view.MenuItem;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Password;
 import nz.frontdoor.netfindr.services.Network;
+import nz.frontdoor.netfindr.services.SingleConnectionInfo;
+
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         WifiService.context = getApplicationContext();
         wifiServiceIntent = new Intent(this, WifiService.class);
         wifiServiceIntent.setData(Uri.parse("START"));
-        MainActivity.this.startService(wifiServiceIntent);
+        //MainActivity.this.startService(wifiServiceIntent);
 
         BroadcastReceiver wifiServiceReciver = new BroadcastReceiver() {
             @Override
@@ -55,6 +62,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d("db", pass.getPhrase());
             passwd = pass;
         }
+
+        Log.d("db", "know wifi? " + db.isKnownNetwork("Poorly secure Wifi"));
+        db.addNetwork(Network.SuccessfulConnection("Poorly secure Wifi", passwd, 234.0, 34.034534, "WPA", new Date()));
+        db.addNetwork(Network.UnsuccessfulConnection("Secure WiFi", 40.2, 150.2, "WPA", new Date()));
+        Log.d("db", "know wifi? " + db.isKnownNetwork("Poorly secure Wifi"));
 
         for (Network conn : db.getSuccessfulNetworks()) {
             Log.d("db", "wifi:" + conn.getWifiName());
@@ -86,16 +98,58 @@ public class MainActivity extends AppCompatActivity {
             DateFormat format = SimpleDateFormat.getDateInstance();
             timestamp.setText("Time Stamp: " + format.format(recent.getTimestamp()));
         }
+
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        MenuItem item = menu.findItem(R.id.on_off_switch);
+        item.setActionView(R.layout.switch_view);
+        SwitchCompat toggle_scanner = (SwitchCompat) item.getActionView().findViewById(R.id.switchForActionBar);
+        toggle_scanner.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    //TODO start hacking
+                    Toast.makeText(getBaseContext(), "Start Scanning", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    // TODO stop hacking
+                    Toast.makeText(getBaseContext(), "Stop Scanning", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getTitle().equals("Settings")){
+
+        }
+        return true;
     }
 
     public void startConnectionList(View v) {
         Intent newList = new Intent(this, ConnectionListActivity.class);
         startActivity(newList);
+    }
+
+    public void startConnectionList2(View v) {
+        Intent newList = new Intent(this, SingleConnectionActivity.class);
+        startActivity(newList);
+    }
+
+    public void viewMostRecent(View v) {
+        Database db = new Database(getApplicationContext());
+        int id = -1;
+        if(db.getMostRecentSuccessfulNetwork() != null){
+            id = db.getMostRecentSuccessfulNetwork().getId();
+        }
+        //Intent mostRecent = new Intent(this, SingleConnectionInfo.class);
+        //mostRecent.putExtra("id", id);
+        //startActivity(mostRecent);
     }
 }
