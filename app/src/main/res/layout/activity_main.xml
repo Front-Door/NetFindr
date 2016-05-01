@@ -81,6 +81,15 @@
             android:orientation="vertical">
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/pass_title"
+                android:textAlignment="center"
+                android:textSize="@dimen/main_page_text"
+                android:textStyle="bold" />
+
+            <TextView
                 android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -88,15 +97,6 @@
                 android:text="-"
                 android:textAlignment="center"
                 android:textSize="@dimen/password_info"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/pass_title"
-                android:textAlignment="center"
-                android:textSize="@dimen/main_page_text"
                 android:textStyle="bold" />
 
         </LinearLayout>

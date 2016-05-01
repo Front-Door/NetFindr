@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         Database db = new Database(getApplicationContext());
         db.getSuccessfulNetworks();
         if(db.getSuccessfulNetworks().isEmpty()){
-            Toast.makeText(getBaseContext(), "No Successful connections to show", Toast.LENGTH_LONG). show();
+            Toast.makeText(getBaseContext(), "No Successful Connections Yet", Toast.LENGTH_LONG). show();
         }else {
             Intent newList = new Intent(this, ConnectionListActivity.class);
             startActivity(newList);
@@ -157,9 +157,12 @@ public class MainActivity extends AppCompatActivity {
         int id = -1;
         if(db.getMostRecentSuccessfulNetwork() != null){
             id = db.getMostRecentSuccessfulNetwork().getId();
+            Intent mostRecent = new Intent(this, SingleConnectionActivity.class);
+            mostRecent.putExtra("id", id);
+            startActivity(mostRecent);
         }
-        Intent mostRecent = new Intent(this, SingleConnectionActivity.class);
-        mostRecent.putExtra("id", id);
-        startActivity(mostRecent);
+        else {
+            Toast.makeText(getBaseContext(), "No Recent Connections", Toast.LENGTH_LONG). show();
+        }
     }
 }
