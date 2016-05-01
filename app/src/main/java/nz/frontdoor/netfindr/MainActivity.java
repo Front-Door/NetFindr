@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -20,12 +19,10 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Password;
 import nz.frontdoor.netfindr.services.Network;
-import nz.frontdoor.netfindr.services.SingleConnectionInfo;
 
 import android.view.Menu;
 import android.view.View;
@@ -79,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
             Log.d("db", "unsuccessful wifi:" + conn.getWifiName());
         }
 
+        updateStatistics();
+    }
+
+    public void updateStatistics() {
+        Database db = new Database(getApplicationContext());
+
         TextView hackCount = (TextView) findViewById(R.id.total_hacks);
         hackCount.setText("" + db.getSuccessfulNetworks().size());
 
@@ -112,20 +115,20 @@ public class MainActivity extends AppCompatActivity {
         toggle_scanner.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if(isChecked) {
                     //TODO start hacking
                     Toast.makeText(getBaseContext(), "Start Scanning", Toast.LENGTH_SHORT).show();
 
-                    wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
-                    wifiServiceIntent.setData(Uri.parse("START"));
+                    Intent wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
+                    wifiServiceIntent.setAction(WifiService.START_SERVICE);
                     MainActivity.this.startService(wifiServiceIntent);
                 }
                 else {
                     // TODO stop hacking
                     Toast.makeText(getBaseContext(), "Stop Scanning", Toast.LENGTH_SHORT).show();
 
-                    wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
-                    wifiServiceIntent.setData(Uri.parse("START"));
+                    Intent wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
+                    wifiServiceIntent.setAction(WifiService.STOP_SERVICE);
                     MainActivity.this.stopService(wifiServiceIntent);
                 }
             }
