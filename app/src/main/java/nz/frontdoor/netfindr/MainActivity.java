@@ -55,10 +55,10 @@ public class MainActivity extends AppCompatActivity {
             passwd = pass;
         }
 
-        //Log.d("db", "know wifi? " + db.isKnownNetwork("Poorly secure Wifi"));
-        //db.addNetwork(Network.SuccessfulConnection("Poorly secure Wifi", passwd, 234.0, 34.034534, "WPA", new Date()));
-        //db.addNetwork(Network.UnsuccessfulConnection("Secure WiFi", 40.2, 150.2, "WPA", new Date()));
-        //Log.d("db", "know wifi? " + db.isKnownNetwork("Poorly secure Wifi"));
+        Log.d("db", "know wifi? " + db.isKnownNetwork("Poorly secure Wifi"));
+        db.addNetwork(Network.SuccessfulConnection("Poorly secure Wifi", passwd, 234.0, 34.034534, "WPA", new Date()));
+        db.addNetwork(Network.UnsuccessfulConnection("Secure WiFi", 40.2, 150.2, "WPA", new Date()));
+        Log.d("db", "know wifi? " + db.isKnownNetwork("Poorly secure Wifi"));
 
         for (Network conn : db.getSuccessfulNetworks()) {
             Log.d("db", "wifi:" + conn.getWifiName());
@@ -126,6 +126,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void startConnectionList(View v) {
         Intent newList = new Intent(this, ConnectionListActivity.class);
+        startActivity(newList);
+    }
+
+    public void startConnectionList2(View v) {
+        Intent newList = new Intent(this, SingleConnectionActivity.class);
         startActivity(newList);
     }
 
