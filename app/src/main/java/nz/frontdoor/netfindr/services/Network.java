@@ -1,6 +1,7 @@
 package nz.frontdoor.netfindr.services;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -90,7 +91,9 @@ public class Network {
         try {
             date = format.parse(cursor.getString(6));
         } catch (ParseException ex) {
-            throw new RuntimeException(ex);
+            Log.e("db", "Error failed to parse string for some reason, setting it to now");
+            date = new Date();
+            //throw new RuntimeException(ex);
         }
 
         return new Network(

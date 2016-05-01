@@ -31,7 +31,6 @@ import java.util.Date;
 import nz.frontdoor.netfindr.services.Database;
 import nz.frontdoor.netfindr.services.Password;
 import nz.frontdoor.netfindr.services.Network;
-import nz.frontdoor.netfindr.services.SingleConnectionInfo;
 
 import android.view.Menu;
 import android.view.View;
@@ -48,18 +47,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ActivityCompat.requestPermissions((Activity) this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+        ActivityCompat.requestPermissions((Activity) this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
 
         WifiService.context = getApplicationContext();
-
-        //MainActivity.this.startService(wifiServiceIntent);
 
         BroadcastReceiver wifiServiceReciver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                // TODO: Update UI
+                updateStatistics();
             }
         };
+
         LocalBroadcastManager.getInstance(this).registerReceiver(wifiServiceReciver, new IntentFilter(WifiService.BROADCAST_ACTION));
         Database db = new Database(getApplicationContext());
         // db.clearNetworks();
@@ -73,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
             passwd = pass;
         }
 
-        db.addNetwork(Network.SuccessfulConnection("Elf's Super Secret Network", passwd, -41.2442852, 174.8, "Open", new Date()));
-
         for (Network conn : db.getSuccessfulNetworks()) {
             Log.d("db", "wifi:" + conn.getWifiName());
             Log.d("db", "loc:" + conn.getLongitude() + ":" + conn.getLatitude());
@@ -84,6 +80,12 @@ public class MainActivity extends AppCompatActivity {
         for (Network conn : db.getUnsuccessfulNetworks()) {
             Log.d("db", "unsuccessful wifi:" + conn.getWifiName());
         }
+
+        updateStatistics();
+    }
+
+    public void updateStatistics() {
+        Database db = new Database(getApplicationContext());
 
         TextView hackCount = (TextView) findViewById(R.id.total_hacks);
         hackCount.setText("" + db.getSuccessfulNetworks().size());
@@ -135,20 +137,20 @@ public class MainActivity extends AppCompatActivity {
         toggle_scanner.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if(isChecked) {
                     //TODO start hacking
                     Toast.makeText(getBaseContext(), "Start Scanning", Toast.LENGTH_SHORT).show();
 
-                    wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
-                    wifiServiceIntent.setData(Uri.parse("START"));
+                    Intent wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
+                    wifiServiceIntent.setAction(WifiService.START_SERVICE);
                     MainActivity.this.startService(wifiServiceIntent);
                 }
                 else {
                     // TODO stop hacking
                     Toast.makeText(getBaseContext(), "Stop Scanning", Toast.LENGTH_SHORT).show();
 
-                    wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
-                    wifiServiceIntent.setData(Uri.parse("START"));
+                    Intent wifiServiceIntent = new Intent(MainActivity.this, WifiService.class);
+                    wifiServiceIntent.setAction(WifiService.STOP_SERVICE);
                     MainActivity.this.stopService(wifiServiceIntent);
                 }
             }
