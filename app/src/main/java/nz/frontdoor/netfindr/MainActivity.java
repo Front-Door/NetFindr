@@ -129,8 +129,9 @@ public class MainActivity extends AppCompatActivity {
         if(db.getMostRecentSuccessfulNetwork() != null){
             id = db.getMostRecentSuccessfulNetwork().getId();
         }
-        //Intent mostRecent = new Intent(this, SingleConnectionInfo.class);
-        //mostRecent.putExtra("id", id);
-        //startActivity(mostRecent);
+        Log.d("Main Actvity", "First"+id);
+        Intent mostRecent = new Intent(this, SingleConnectionActivity.class);
+        mostRecent.putExtra("id", id);
+        startActivity(mostRecent);
     }
 }
