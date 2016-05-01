@@ -1,5 +1,6 @@
 package nz.frontdoor.netfindr;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +44,10 @@ public class ConnectionListActivity extends AppCompatActivity implements Connect
 
     @Override
     public void onNetWorkClicked(Network netWork) {
-
+        Database db = new Database(getApplicationContext());
+        int id = netWork.getId();
+        Intent singlenet = new Intent(this, SingleConnectionActivity.class);
+        singlenet.putExtra("id", id);
+        startActivity(singlenet);
     }
 }

