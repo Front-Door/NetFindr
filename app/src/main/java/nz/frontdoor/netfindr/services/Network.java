@@ -85,7 +85,7 @@ public class Network {
 
     public static Network fromCursor(Cursor cursor) {
 
-        DateFormat format = SimpleDateFormat.getDateTimeInstance();
+        DateFormat format = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.DEFAULT, SimpleDateFormat.DEFAULT);
         Date date;
         try {
             date = format.parse(cursor.getString(6));

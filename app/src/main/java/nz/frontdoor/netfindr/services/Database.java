@@ -105,7 +105,7 @@ public class Database extends SQLiteOpenHelper {
      * @param result
      */
     public void addNetwork(Network result) {
-        DateFormat format = SimpleDateFormat.getDateTimeInstance();
+        DateFormat format = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.DEFAULT, SimpleDateFormat.DEFAULT);
 
         ContentValues values = new ContentValues();
         values.put(RESULTS_WIFI_NAME, result.getWifiName());
@@ -244,6 +244,7 @@ public class Database extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery("SELECT * FROM " + RESULTS_TABLE_NAME + ";", null);
         int count = cursor.getCount();
+
         cursor.close();
         db.close();
 
@@ -255,6 +256,7 @@ public class Database extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery("SELECT * FROM " + PASSWORDS_TABLE_NAME + ";", null);
         int count = cursor.getCount();
+
         cursor.close();
         db.close();
 
@@ -285,7 +287,7 @@ public class Database extends SQLiteOpenHelper {
         return password;
     }
 
-    public Network getNetworkdById(int id) {
+    public Network getNetworkById(int id) {
         SQLiteDatabase db = getReadableDatabase();
 
         Cursor cursor = db.query(RESULTS_TABLE_NAME,
@@ -323,6 +325,7 @@ public class Database extends SQLiteOpenHelper {
                 RESULTS_WIFI_NAME + "=?", new String[] { wifiName }, null, null, null, null
         );
         int count = cursor.getCount();
+
         cursor.close();
         db.close();
 
@@ -350,6 +353,5 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + RESULTS_TABLE_NAME + ";");
         db.execSQL("VACUUM;");
         db.close();
-
     }
 }

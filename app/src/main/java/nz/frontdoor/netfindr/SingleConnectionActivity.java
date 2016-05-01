@@ -2,7 +2,6 @@ package nz.frontdoor.netfindr;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +26,7 @@ public class SingleConnectionActivity extends AppCompatActivity {
         }
         else {
             setContentView(R.layout.activity_single_connection);
-            Network n = db.getNetworkdById(id);
+            Network n = db.getNetworkById(id);
 
             TextView password = (TextView) findViewById(R.id.password_single_data);
             password.setText(n.getPassword(db).getPhrase());
