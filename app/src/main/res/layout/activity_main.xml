@@ -31,6 +31,7 @@
                     android:textSize="@dimen/num_stats"
                     android:textStyle="bold" />
 
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -160,6 +161,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="startConnectionList"/>
+
+
         </LinearLayout>
 
     </RelativeLayout>
