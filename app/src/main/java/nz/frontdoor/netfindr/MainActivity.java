@@ -2,7 +2,10 @@ package nz.frontdoor.netfindr;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("db", pass.getPhrase());
             passwd = pass;
         }
-        
+
         db.addNetwork(Network.SuccessfulConnection("Elf's Super Secret Network", passwd, 0.10, 23.45, "Open", new Date()));
         db.addNetwork(Network.SuccessfulConnection("Poorly secure Wifi", passwd, 234.0, 34.034534, "WPA", new Date()));
         db.addNetwork(Network.UnsuccessfulConnection("Secure WiFi", 40.2, 150.2, "WPA", new Date()));
